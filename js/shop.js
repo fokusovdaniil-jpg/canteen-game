@@ -1,4 +1,4 @@
-// Modern Lit Energy Shop & Wardrobe Customization Engine
+// Modern Lit Energy Shop & Wardrobe Customization Engine with Realistic Assets
 
 class ShopManager {
     constructor() {
@@ -20,7 +20,7 @@ class ShopManager {
                 <div class="fitting-avatar-display">
                     <div class="fitting-pedestal">
                         <div id="shopAvatarPreview" class="avatar-interactive-preview">
-                            ${this.renderUserPreviewSVG(user, this.previewItem)}
+                            ${this.renderUserPreview(user, this.previewItem)}
                         </div>
                     </div>
                     <div class="fitting-character-name">
@@ -30,10 +30,10 @@ class ShopManager {
                 </div>
 
                 <div class="fitting-info-box">
-                    <span class="lit-badge-fire">⚡ LIT FASHION & MEMES</span>
+                    <span class="lit-badge-fire">⚡ VIP WARDROBE & MEMES</span>
                     <h2 class="lit-title">ГАРДЕРОБ & МЕМ-МАРКЕТ</h2>
-                    <p class="lit-subtitle">Покупайте легендарные мемные костюмы, аксессуары и золотые скины за фишки!</p>
-                    <div class="fitting-tip">💡 Нажмите «Примерить» на любом предмете, чтобы увидеть его в примерочной.</div>
+                    <p class="lit-subtitle">Приобретайте легендарные мемные образы, брендовые худи и золотые скины за фишки!</p>
+                    <div class="fitting-tip">💡 Нажмите «Примерить» на любом предмете, чтобы увидеть персонажа в примерочной.</div>
                 </div>
             </div>
 
@@ -57,7 +57,7 @@ class ShopManager {
         this.bindShopEvents(container);
     }
 
-    renderUserPreviewSVG(user, tempItem = null) {
+    renderUserPreview(user, tempItem = null) {
         const base = {
             gender: user.gender || 'male',
             skin: user.skin || 'fair',
@@ -76,7 +76,7 @@ class ShopManager {
             if (tempItem.category === 'accessory') base.accessory = tempItem.id;
         }
 
-        return AvatarRenderer.renderSVG(base, 110);
+        return AvatarRenderer.renderSVG(base, 115);
     }
 
     renderItemsList(items, user) {
@@ -85,16 +85,27 @@ class ShopManager {
             const isEquipped = this.isItemEquipped(user, item);
             const canAfford = user.chips >= item.price;
 
-            const previewConfig = {
-                gender: 'male',
-                skin: 'fair',
-                hair: 'black',
-                hairStyle: 'fade'
-            };
-            if (item.category === 'costume') previewConfig.costume = item.id;
-            if (item.category === 'hat') previewConfig.hat = item.id;
-            if (item.category === 'glasses') previewConfig.glasses = item.id;
-            if (item.category === 'accessory') previewConfig.accessory = item.id;
+            // Render miniature icon
+            let iconHTML = '';
+            if (REALISTIC_SKIN_IMAGES[item.id]) {
+                iconHTML = `
+                <div style="width: 72px; height: 72px; border-radius: 50%; overflow: hidden; position: relative; border: 2px solid #ff5500; box-shadow: 0 4px 14px rgba(0,0,0,0.6);">
+                    <img src="${REALISTIC_SKIN_IMAGES[item.id]}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block;" />
+                </div>
+                `;
+            } else {
+                const previewConfig = {
+                    gender: 'male',
+                    skin: 'fair',
+                    hair: 'black',
+                    hairStyle: 'fade'
+                };
+                if (item.category === 'costume') previewConfig.costume = item.id;
+                if (item.category === 'hat') previewConfig.hat = item.id;
+                if (item.category === 'glasses') previewConfig.glasses = item.id;
+                if (item.category === 'accessory') previewConfig.accessory = item.id;
+                iconHTML = AvatarRenderer.renderSVG(previewConfig, 72);
+            }
 
             return `
             <div class="shop-item-card ${isEquipped ? 'item-equipped' : ''}" data-cat="${item.category}" data-id="${item.id}">
@@ -106,7 +117,7 @@ class ShopManager {
                 </div>
 
                 <div class="item-avatar-icon">
-                    ${AvatarRenderer.renderSVG(previewConfig, 64)}
+                    ${iconHTML}
                 </div>
 
                 <div class="item-details">
@@ -172,7 +183,7 @@ class ShopManager {
                     const previewBox = container.querySelector('#shopAvatarPreview');
                     const user = StorageManager.getUser();
                     if (previewBox && user) {
-                        previewBox.innerHTML = this.renderUserPreviewSVG(user, item);
+                        previewBox.innerHTML = this.renderUserPreview(user, item);
                     }
                     window.soundCtrl?.playClick();
                 }
