@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Retro Casino PSP | Telegram Mini App</title>
+    <meta name="description" content="2D Pixel Casino в стиле PSP: Блэкджек, Европейская рулетка, комнаты КПД, мемные скины Зубенко и Иван Золо!">
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 1. TOP RETRO HEADER -->
+        <header class="retro-header">
+            <div class="logo-badge">
+                <span class="logo-icon">🎰</span>
+                <span class="logo-text">CASINO PSP</span>
+            </div>
+
+            <!-- Chips Balance Pill -->
+            <div class="header-chips-pill" title="Ваш баланс фишек">
+                <span class="chips-icon">🪙</span>
+                <span class="chips-amount" id="headerChipsAmount">300</span>
+                <button class="btn-add-chips" id="btnAddChips" title="Получить бонус фишек">+</button>
+            </div>
+
+            <!-- Sound & Profile Header Controls -->
+            <div class="header-right">
+                <button class="header-sound-btn" id="btnToggleSound" title="Звук вкл/выкл">🔊</button>
+                <div class="header-user-badge" id="headerUserBadge" title="Профиль">
+                    <div class="header-avatar" id="headerUserAvatar"></div>
+                    <span class="header-nick" id="headerUserNick">Игрок</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 2. MAIN VIEWPORT SCREENS -->
+        <main class="main-viewport">
+            <!-- Screen 1: Lobby of Tables/Rooms (КПД Style) -->
+            <section class="screen-container screen-active" id="screenLobby"></section>
+
+            <!-- Screen 2: Active In-Game Room -->
+            <section class="screen-container" id="screenRoom"></section>
+
+            <!-- Screen 3: Meme Shop & Wardrobe -->
+            <section class="screen-container" id="screenShop"></section>
+
+            <!-- Screen 4: Leaderboard Top Players -->
+            <section class="screen-container" id="screenLeaderboard"></section>
+
+            <!-- Screen 5: Profile & Stats -->
+            <section class="screen-container" id="screenProfile"></section>
+        </main>
+
+        <!-- 3. BOTTOM RETRO NAVIGATION BAR -->
+        <nav class="retro-bottom-nav">
+            <button class="nav-item active" data-screen="lobby">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">ЛОББИ</span>
+            </button>
+            <button class="nav-item" data-screen="quick_blackjack">
+                <span class="nav-icon">♠️</span>
+                <span class="nav-label">21 ОЧКО</span>
+            </button>
+            <button class="nav-item" data-screen="quick_roulette">
+                <span class="nav-icon">🎲</span>
+                <span class="nav-label">РУЛЕТКА</span>
+            </button>
+            <button class="nav-item" data-screen="shop">
+                <span class="nav-icon">🛍</span>
+                <span class="nav-label">СКИНЫ</span>
+            </button>
+            <button class="nav-item" data-screen="leaderboard">
+                <span class="nav-icon">🏆</span>
+                <span class="nav-label">ТОП</span>
+            </button>
+            <button class="nav-item" data-screen="profile">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">ПРОФИЛЬ</span>
+            </button>
+        </nav>
+
+        <!-- 4. MODAL: REGISTRATION (First launch) -->
+        <div class="modal-overlay" id="modalRegister">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h2 class="retro-title">СОЗДАНИЕ ПЕРСОНАЖА</h2>
+                    <p class="retro-subtitle">Выберите внешний вид вашего капера и получите стартовые фишки</p>
+                </div>
+
+                <div class="reg-preview-box">
+                    <div class="avatar-pedestal" id="regAvatarPreview"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">ВЫБЕРИТЕ ОБРАЗ:</label>
+                    <div class="reg-presets-list">
+                        <button class="preset-btn selected" data-gender="male" data-skin="fair" data-hair="black" data-style="short">
+                            👨 Парень (Светлый)
+                        </button>
+                        <button class="preset-btn" data-gender="male" data-skin="tan" data-hair="brown" data-style="fade">
+                            👨 Парень (Смуглый)
+                        </button>
+                        <button class="preset-btn" data-gender="male" data-skin="dark" data-hair="black" data-style="buzz">
+                            👨 Парень (Тёмный)
+                        </button>
+                        <button class="preset-btn" data-gender="female" data-skin="fair" data-hair="blonde" data-style="long">
+                            👩 Девушка (Светлая)
+                        </button>
+                        <button class="preset-btn" data-gender="female" data-skin="medium" data-hair="brown" data-style="ponytail">
+                            👩 Девушка (Русая)
+                        </button>
+                        <button class="preset-btn" data-gender="female" data-skin="dark" data-hair="black" data-style="curls">
+                            👩 Девушка (Тёмная)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">НИКНЕЙМ В ИГРЕ:</label>
+                    <input type="text" class="input-pixel" id="regNickInput" placeholder="Введите ваш ник..." maxlength="16" value="Lucky_Player">
+                </div>
+
+                <div class="bonus-announcement">
+                    <div class="bonus-gold-text">🪙 СТАРТОВЫЙ БОНУС: 300 ФИШЕК!</div>
+                    <div class="bonus-desc">Начисляется каждому игроку при первой регистрации</div>
+                </div>
+
+                <button class="btn-pixel btn-success btn-glow" id="btnSubmitRegister" style="width: 100%;">
+                    🎮 НАЧАТЬ ИГРУ
+                </button>
+            </div>
+        </div>
+
+        <!-- 5. MODAL: CREATE ROOM (КПД Style) -->
+        <div class="modal-overlay" id="modalCreateRoom">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h2 class="retro-title">СОЗДАНИЕ СТОЛА</h2>
+                    <p class="retro-subtitle">Настройте параметры вашей комнаты для игры</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">НАЗВАНИЕ СТОЛА:</label>
+                    <input type="text" class="input-pixel" id="createRoomName" placeholder="Например: Хата Авторитетов" maxlength="24" value="Стол Удачи">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">ИГРОВОЙ РЕЖИМ:</label>
+                    <select class="input-pixel" id="createRoomGame">
+                        <option value="blackjack">♠️ Блэкджек (21 очко)</option>
+                        <option value="roulette">🎲 Европейская Рулетка</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">МИНИМАЛЬНАЯ СТАВКА (ФИШКИ):</label>
+                    <select class="input-pixel" id="createRoomMinBet">
+                        <option value="10">10 🪙 (Новичок)</option>
+                        <option value="25" selected>25 🪙 (Любитель)</option>
+                        <option value="50">50 🪙 (Профи)</option>
+                        <option value="100">100 🪙 (Хайроллер)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">КОЛИЧЕСТВО МЕСТ ЗА СТОЛОМ:</label>
+                    <select class="input-pixel" id="createRoomMaxPlayers">
+                        <option value="2">2 игрока</option>
+                        <option value="4" selected>4 игрока</option>
+                        <option value="6">6 игроков</option>
+                    </select>
+                </div>
+
+                <div class="action-buttons-row" style="margin-top: 14px;">
+                    <button class="btn-pixel btn-secondary" id="btnCloseCreateRoom">ОТМЕНА</button>
+                    <button class="btn-pixel btn-success btn-glow" id="btnSubmitCreateRoom">СОЗДАТЬ СТОЛ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts in logical dependency order -->
+    <script src="js/audio.js"></script>
+    <script src="js/avatar.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/blackjack.js"></script>
+    <script src="js/roulette.js"></script>
+    <script src="js/rooms.js"></script>
+    <script src="js/shop.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
