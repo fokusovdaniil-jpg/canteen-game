@@ -1,33 +1,29 @@
-// Main Application Controller for Retro Casino (PSP / Telegram Mini App)
+// Main Controller for LIT CASINO (Lit Energy Edition)
 
 class App {
     constructor() {
         this.currentScreen = 'lobby';
         this.roomsManager = new RoomsManager();
         this.shopManager = new ShopManager();
+        this.logoClickCount = 0;
         this.init();
     }
 
     init() {
-        // 1. Telegram WebApp Integration
         if (window.Telegram && window.Telegram.WebApp) {
             try {
                 window.Telegram.WebApp.ready();
                 window.Telegram.WebApp.expand();
-                window.Telegram.WebApp.headerColor = '#0f172a';
-                window.Telegram.WebApp.backgroundColor = '#0b0f19';
-            } catch (e) {
-                console.warn('Telegram WebApp SDK init note:', e);
-            }
+                window.Telegram.WebApp.headerColor = '#0a0d14';
+                window.Telegram.WebApp.backgroundColor = '#07090e';
+            } catch (e) {}
         }
 
-        // 2. Sound state check
         const soundBtn = document.getElementById('btnToggleSound');
         if (soundBtn && window.soundCtrl?.muted) {
             soundBtn.textContent = '🔇';
         }
 
-        // 3. User Registration Check
         const user = StorageManager.getUser();
         if (!user) {
             this.showRegistrationModal();
@@ -71,23 +67,21 @@ class App {
         if (!modal) return;
         modal.classList.add('modal-active');
 
-        // Setup live preview
         let regConfig = {
             gender: 'male',
             skin: 'fair',
             hair: 'black',
-            hairStyle: 'short'
+            hairStyle: 'fade'
         };
 
         const previewContainer = document.getElementById('regAvatarPreview');
         const updatePreview = () => {
             if (previewContainer) {
-                previewContainer.innerHTML = AvatarRenderer.renderSVG(regConfig, 96);
+                previewContainer.innerHTML = AvatarRenderer.renderSVG(regConfig, 100);
             }
         };
         updatePreview();
 
-        // Preset selector clicks
         modal.querySelectorAll('.preset-btn').forEach(btn => {
             btn.onclick = () => {
                 modal.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
@@ -101,14 +95,13 @@ class App {
             };
         });
 
-        // Submit registration
         const btnSave = document.getElementById('btnSubmitRegister');
         if (btnSave) {
             btnSave.onclick = () => {
                 const nickInput = document.getElementById('regNickInput');
                 let nick = nickInput?.value.trim();
                 if (!nick) {
-                    nick = 'Игрок_' + Math.floor(1000 + Math.random() * 9000);
+                    nick = 'Капер_' + Math.floor(1000 + Math.random() * 9000);
                 }
 
                 const newUser = StorageManager.createUser({
@@ -122,7 +115,7 @@ class App {
                 modal.classList.remove('modal-active');
                 window.soundCtrl?.playWin();
                 this.updateHeaderUser();
-                this.showNotification(`🎉 Добро пожаловать, ${newUser.nickname}! Вам начислено 300 стартовых фишек!`);
+                this.showNotification(`🔥 Добро пожаловать, ${newUser.nickname}! Вам начислено 300 стартовых фишек!`);
                 this.showScreen('lobby');
             };
         }
@@ -131,12 +124,10 @@ class App {
     showScreen(screenName) {
         this.currentScreen = screenName;
 
-        // Hide all screens
         document.querySelectorAll('.screen-container').forEach(el => {
             el.classList.remove('screen-active');
         });
 
-        // Update nav buttons
         document.querySelectorAll('.nav-item').forEach(item => {
             if (item.getAttribute('data-screen') === screenName) {
                 item.classList.add('active');
@@ -145,7 +136,6 @@ class App {
             }
         });
 
-        // Render target screen
         if (screenName === 'lobby') {
             const screen = document.getElementById('screenLobby');
             if (screen) {
@@ -171,23 +161,21 @@ class App {
                 this.renderProfile('screenProfile');
             }
         } else if (screenName === 'quick_blackjack') {
-            // Direct launch of solo/quick blackjack
             const room = {
                 id: 'quick_bj',
-                name: 'Одиночный Блэкджек',
+                name: 'VIP Блэкджек',
                 game: 'blackjack',
-                minBet: 10,
+                minBet: 25,
                 maxPlayers: 1,
                 players: []
             };
             this.showRoomScreen(room);
         } else if (screenName === 'quick_roulette') {
-            // Direct launch of solo/quick roulette
             const room = {
                 id: 'quick_roulette',
-                name: 'Европейская Рулетка',
+                name: 'Европейская Рулетка Lit',
                 game: 'roulette',
-                minBet: 10,
+                minBet: 25,
                 maxPlayers: 1,
                 players: []
             };
@@ -213,8 +201,9 @@ class App {
         container.innerHTML = `
         <div class="leaderboard-wrapper">
             <div class="leaderboard-header">
-                <h2 class="retro-title">ТАБЛИЦА ЛИДЕРОВ КАЗИНО</h2>
-                <p class="retro-subtitle">Самые богатые игроки по количеству выигранных фишек</p>
+                <span class="lit-badge-fire">⚡ HALL OF FAME</span>
+                <h2 class="lit-title">ТАБЛИЦА ЛИДЕРОВ КАЗИНО</h2>
+                <p class="lit-subtitle">Топ богатейших игроков по количеству фишек</p>
             </div>
 
             <div class="leaderboard-list">
@@ -227,13 +216,13 @@ class App {
                     <div class="leader-row ${isSelf ? 'leader-row-self' : ''}">
                         <div class="leader-rank">${rankMedal}</div>
                         <div class="leader-avatar">
-                            ${AvatarRenderer.renderSVG(player.avatar || {}, 40)}
+                            ${AvatarRenderer.renderSVG(player.avatar || {}, 44)}
                         </div>
                         <div class="leader-meta">
                             <div class="leader-name">
                                 ${player.nickname} ${isSelf ? '<span class="self-tag">(ВЫ)</span>' : ''}
                             </div>
-                            <div class="leader-sub">Побед: ${player.wins || 0}</div>
+                            <div class="leader-sub">Побед в раундах: ${player.wins || 0}</div>
                         </div>
                         <div class="leader-chips">
                             <span class="chips-val">${player.chips.toLocaleString('ru-RU')}</span>
@@ -272,14 +261,15 @@ class App {
                 </div>
 
                 <div class="profile-info">
+                    <span class="lit-badge-fire">⚡ VIP MEMBER</span>
                     <h2 class="profile-nick">${user.nickname}</h2>
                     <div class="profile-chips-badge">
                         Баланс: <span class="badge-chips-val">${user.chips.toLocaleString('ru-RU')} 🪙</span>
                     </div>
                     <div class="profile-buttons-row">
-                        <button class="btn-pixel btn-warning btn-sm" id="btnClaimDaily">🎁 ДНЕВНОЙ БОНУС (+100)</button>
+                        <button class="btn-lit btn-lit-gold btn-sm" id="btnClaimDaily">🎁 ДНЕВНОЙ БОНУС (+100)</button>
                         ${user.chips < 10 ? `
-                            <button class="btn-pixel btn-danger btn-sm pulse-btn" id="btnClaimBailout">🚨 ПОДГОН КАЗИНО (+50)</button>
+                            <button class="btn-lit btn-lit-danger btn-sm pulse-btn" id="btnClaimBailout">🚨 ПОДГОН (+50)</button>
                         ` : ''}
                     </div>
                 </div>
@@ -296,23 +286,23 @@ class App {
                     <div class="stat-label">Всего побед</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-num">${user.stats?.biggestWin || 0} 🪙</div>
-                    <div class="stat-label">Рекордный выигрыш</div>
+                    <div class="stat-num">${(user.stats?.biggestWin || 0).toLocaleString('ru-RU')} 🪙</div>
+                    <div class="stat-label">Рекордный куш</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-num">${(user.inventory || []).length}</div>
-                    <div class="stat-label">Вещей в инвентаре</div>
+                    <div class="stat-label">Куплено скинов</div>
                 </div>
             </div>
 
-            <!-- Quick Action Links -->
+            <!-- Actions -->
             <div class="profile-quick-nav">
-                <button class="btn-pixel btn-primary" id="btnProfileGoShop">🛍 ПЕРЕЙТИ В МАГАЗИН СКИНОВ</button>
+                <button class="btn-lit btn-lit-primary" id="btnProfileGoShop">🛍 МАГАЗИН ОБРАЗОВ И МЕМОВ</button>
+                <button class="btn-lit btn-lit-fire" id="btnOpenAdminFromProfile">⚡ ПАНЕЛЬ АДМИНИСТРАТОРА</button>
             </div>
         </div>
         `;
 
-        // Bind Profile events
         const btnDaily = container.querySelector('#btnClaimDaily');
         if (btnDaily) {
             btnDaily.onclick = () => {
@@ -346,14 +336,19 @@ class App {
 
         const btnGoShop = container.querySelector('#btnProfileGoShop');
         if (btnGoShop) {
-            btnGoShop.onclick = () => {
-                this.showScreen('shop');
+            btnGoShop.onclick = () => this.showScreen('shop');
+        }
+
+        const btnAdmin = container.querySelector('#btnOpenAdminFromProfile');
+        if (btnAdmin) {
+            btnAdmin.onclick = () => {
+                window.soundCtrl?.playClick();
+                if (window.adminPanel) window.adminPanel.renderAdminModal();
             };
         }
     }
 
     bindGlobalEvents() {
-        // Navigation bar buttons
         document.querySelectorAll('.nav-item').forEach(item => {
             item.onclick = () => {
                 const screen = item.getAttribute('data-screen');
@@ -362,7 +357,27 @@ class App {
             };
         });
 
-        // Header Sound toggle
+        // Secret Admin trigger by clicking Logo 5 times
+        const logo = document.getElementById('headerLogo');
+        if (logo) {
+            logo.onclick = () => {
+                this.logoClickCount++;
+                if (this.logoClickCount >= 5) {
+                    this.logoClickCount = 0;
+                    window.soundCtrl?.playWin();
+                    if (window.adminPanel) window.adminPanel.renderAdminModal();
+                }
+            };
+        }
+
+        const btnAdminTop = document.getElementById('btnAdminHeader');
+        if (btnAdminTop) {
+            btnAdminTop.onclick = () => {
+                window.soundCtrl?.playClick();
+                if (window.adminPanel) window.adminPanel.renderAdminModal();
+            };
+        }
+
         const btnSound = document.getElementById('btnToggleSound');
         if (btnSound) {
             btnSound.onclick = () => {
@@ -371,7 +386,6 @@ class App {
             };
         }
 
-        // Header Add Chips / Bonus
         const btnAddChips = document.getElementById('btnAddChips');
         if (btnAddChips) {
             btnAddChips.onclick = () => {
@@ -381,7 +395,6 @@ class App {
                     this.updateHeaderUser();
                     this.showNotification(`🎁 Ежедневный бонус: +${res.bonus} фишек!`);
                 } else {
-                    // Try bailout if balance is low
                     const bailout = StorageManager.claimBailout();
                     if (bailout.success) {
                         window.soundCtrl?.playWin();
@@ -394,7 +407,6 @@ class App {
             };
         }
 
-        // Header Profile Icon click
         const userBadge = document.getElementById('headerUserBadge');
         if (userBadge) {
             userBadge.onclick = () => {
@@ -403,15 +415,12 @@ class App {
             };
         }
 
-        // Modal Create Room Cancel & Confirm
         const modalCreate = document.getElementById('modalCreateRoom');
         const btnCloseCreate = document.getElementById('btnCloseCreateRoom');
         const btnSubmitCreate = document.getElementById('btnSubmitCreateRoom');
 
         if (btnCloseCreate && modalCreate) {
-            btnCloseCreate.onclick = () => {
-                modalCreate.classList.remove('modal-active');
-            };
+            btnCloseCreate.onclick = () => modalCreate.classList.remove('modal-active');
         }
 
         if (btnSubmitCreate && modalCreate) {
@@ -422,7 +431,7 @@ class App {
                 const maxPlayersSelect = document.getElementById('createRoomMaxPlayers');
 
                 const newRoom = StorageManager.createRoom({
-                    name: nameInput?.value.trim() || 'Комната удачи',
+                    name: nameInput?.value.trim() || 'Стол Lit Energy',
                     game: gameSelect?.value || 'blackjack',
                     minBet: minBetSelect?.value || 25,
                     maxPlayers: maxPlayersSelect?.value || 4
@@ -439,7 +448,7 @@ class App {
     initCrossTabSync() {
         if ('BroadcastChannel' in window) {
             try {
-                const bc = new BroadcastChannel('retro_casino_sync');
+                const bc = new BroadcastChannel('lit_casino_sync');
                 bc.onmessage = (event) => {
                     const { action } = event.data || {};
                     if (action === 'user_updated') {
@@ -459,12 +468,12 @@ class App {
             toast.id = 'retroToast';
             document.body.appendChild(toast);
         }
-        toast.className = `retro-toast toast-${type} toast-show`;
+        toast.className = `lit-toast toast-${type} toast-show`;
         toast.textContent = msg;
 
         setTimeout(() => {
             toast.classList.remove('toast-show');
-        }, 3200);
+        }, 3000);
     }
 }
 

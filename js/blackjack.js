@@ -1,4 +1,4 @@
-// Retro 2D Pixel Blackjack Engine with Virtual Dealer
+// Modern Lit Energy Blackjack Engine with Virtual Dealer & Admin God Mode
 
 class BlackjackGame {
     constructor(containerId, options = {}) {
@@ -8,10 +8,10 @@ class BlackjackGame {
         this.playerHand = [];
         this.dealerHand = [];
         this.currentBet = 0;
-        this.selectedChip = 10;
-        this.gameState = 'betting'; // 'betting', 'player_turn', 'dealer_turn', 'game_over'
-        this.dealerMessage = 'Делайте ваши ставки, господа!';
-        this.minBet = options.minBet || 10;
+        this.selectedChip = 25;
+        this.gameState = 'betting';
+        this.dealerMessage = 'Делайте ваши ставки на сукне!';
+        this.minBet = options.minBet || 25;
         this.init();
     }
 
@@ -37,7 +37,6 @@ class BlackjackGame {
             { rank: 'A', value: 11 }
         ];
 
-        // 4 standard decks shuffled
         let deck = [];
         for (let d = 0; d < 4; d++) {
             for (let s of suits) {
@@ -47,7 +46,7 @@ class BlackjackGame {
             }
         }
 
-        // Fisher-Yates shuffle
+        // Shuffle
         for (let i = deck.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [deck[i], deck[j]] = [deck[j], deck[i]];
@@ -79,7 +78,7 @@ class BlackjackGame {
         if (msgEl) {
             msgEl.textContent = msg;
             msgEl.classList.remove('pop');
-            void msgEl.offsetWidth; // re-trigger anim
+            void msgEl.offsetWidth;
             msgEl.classList.add('pop');
         }
     }
@@ -110,7 +109,7 @@ class BlackjackGame {
     deal() {
         if (this.gameState !== 'betting') return;
         if (this.currentBet < this.minBet) {
-            this.setDealerMsg(`Минимальная ставка за этим столом: ${this.minBet} фишек!`);
+            this.setDealerMsg(`Минимальная ставка за столом: ${this.minBet} 🪙!`);
             return;
         }
 
@@ -120,7 +119,6 @@ class BlackjackGame {
             return;
         }
 
-        // Deduct bet from balance
         StorageManager.updateChips(-this.currentBet);
         if (window.app) window.app.updateHeaderUser();
 
@@ -132,7 +130,28 @@ class BlackjackGame {
         this.setDealerMsg('Раздача карт...');
         window.soundCtrl?.playCardDeal();
 
-        // Deal cards sequence: Player, Dealer, Player, Dealer (hidden)
+        const luckMode = window.adminPanel ? window.adminPanel.getLuckMode() : 'fair';
+
+        // Check God Mode
+        if (luckMode === 'god') {
+            // Guarantee 21 for player
+            this.playerHand = [
+                { suit: '♠', rank: 'A', value: 11 },
+                { suit: '♦', rank: 'K', value: 10 }
+            ];
+            this.dealerHand = [
+                { suit: '♣', rank: '9', value: 9 },
+                { suit: '♥', rank: '7', value: 7 }
+            ];
+            setTimeout(() => {
+                this.gameState = 'player_turn';
+                this.renderTable();
+                this.checkInitialBlackjack();
+            }, 500);
+            return;
+        }
+
+        // Standard Deal
         this.playerHand.push(this.deck.pop());
         this.renderTable();
 
@@ -163,21 +182,21 @@ class BlackjackGame {
 
         if (playerBJ && dealerBJ) {
             this.gameState = 'game_over';
-            this.setDealerMsg('Ничья (Push)! У обоих блэкджек.');
-            StorageManager.updateChips(this.currentBet); // refund
+            this.setDealerMsg('Ничья (Push)! У обоих 21.');
+            StorageManager.updateChips(this.currentBet);
             window.soundCtrl?.playClick();
             this.finishRound();
         } else if (playerBJ) {
             this.gameState = 'game_over';
-            const winAmount = Math.floor(this.currentBet * 2.5); // 3:2 payout + bet
-            this.setDealerMsg('💥 БЛЭКДЖЕК! Натуральные 21! Выигрыш 3 к 2!');
+            const winAmount = Math.floor(this.currentBet * 2.5);
+            this.setDealerMsg('⚡ БЛЭКДЖЕК! Натуральные 21! Выигрыш 3:2!');
             StorageManager.updateChips(winAmount);
             this.recordStats(true, true);
             window.soundCtrl?.playBlackjack();
             this.finishRound();
         } else {
             const playerScore = this.calculateScore(this.playerHand);
-            this.setDealerMsg(`У вас ${playerScore}. Ваш ход: Еще, Хватит или Удвоить?`);
+            this.setDealerMsg(`У вас ${playerScore}. Ваш ход: «Еще», «Хватит» или «Удвоить»?`);
         }
         this.renderTable();
     }
@@ -185,12 +204,26 @@ class BlackjackGame {
     hit() {
         if (this.gameState !== 'player_turn') return;
         window.soundCtrl?.playCardDeal();
-        this.playerHand.push(this.deck.pop());
-        const score = this.calculateScore(this.playerHand);
 
+        const luckMode = window.adminPanel ? window.adminPanel.getLuckMode() : 'fair';
+        if (luckMode === 'god') {
+            const currentScore = this.calculateScore(this.playerHand);
+            const needed = 21 - currentScore;
+            if (needed >= 2 && needed <= 10) {
+                this.playerHand.push({ suit: '♠', rank: needed.toString(), value: needed });
+            } else if (needed === 11 || needed === 1) {
+                this.playerHand.push({ suit: '♥', rank: 'A', value: 11 });
+            } else {
+                this.playerHand.push(this.deck.pop());
+            }
+        } else {
+            this.playerHand.push(this.deck.pop());
+        }
+
+        const score = this.calculateScore(this.playerHand);
         if (score > 21) {
             this.gameState = 'game_over';
-            this.setDealerMsg(`Перебор (${score})! Казино забирает банк.`);
+            this.setDealerMsg(`Перебор (${score})! Казино забирает ставку.`);
             window.soundCtrl?.playLose();
             this.recordStats(false, false);
             this.finishRound();
@@ -210,7 +243,6 @@ class BlackjackGame {
             return;
         }
 
-        // Deduct extra bet
         StorageManager.updateChips(-this.currentBet);
         this.currentBet *= 2;
         if (window.app) window.app.updateHeaderUser();
@@ -235,11 +267,21 @@ class BlackjackGame {
     stand() {
         if (this.gameState !== 'player_turn') return;
         this.gameState = 'dealer_turn';
-        this.setDealerMsg('Ход крупье...');
+        this.setDealerMsg('Ход дилера...');
         this.renderTable();
+
+        const luckMode = window.adminPanel ? window.adminPanel.getLuckMode() : 'fair';
 
         const dealerStep = () => {
             const dealerScore = this.calculateScore(this.dealerHand);
+            if (luckMode === 'god' && dealerScore >= 17 && dealerScore <= 21) {
+                // In god mode, force dealer to bust
+                this.dealerHand.push({ suit: '♦', rank: '10', value: 10 });
+                this.renderTable();
+                this.resolveWinner();
+                return;
+            }
+
             if (dealerScore < 17) {
                 setTimeout(() => {
                     window.soundCtrl?.playCardDeal();
@@ -262,7 +304,7 @@ class BlackjackGame {
 
         if (dealerScore > 21) {
             const winAmount = this.currentBet * 2;
-            this.setDealerMsg(`У дилера перебор (${dealerScore})! ВЫ ПОБЕДИЛИ! +${winAmount} 🪙`);
+            this.setDealerMsg(`У дилера перебор (${dealerScore})! ПОБЕДА! +${winAmount} 🪙`);
             StorageManager.updateChips(winAmount);
             this.recordStats(true, false);
             window.soundCtrl?.playWin();
@@ -277,7 +319,7 @@ class BlackjackGame {
             StorageManager.updateChips(this.currentBet);
             window.soundCtrl?.playClick();
         } else {
-            this.setDealerMsg(`У дилера ${dealerScore}, у вас ${playerScore}. Казино выиграло.`);
+            this.setDealerMsg(`У дилера ${dealerScore}, у вас ${playerScore}. Выигрыш дилера.`);
             window.soundCtrl?.playLose();
             this.recordStats(false, false);
         }
@@ -306,21 +348,21 @@ class BlackjackGame {
         this.playerHand = [];
         this.dealerHand = [];
         this.gameState = 'betting';
-        this.setDealerMsg('Новый раунд! Поставьте фишки и нажмите "Раздать".');
+        this.setDealerMsg('Новый раунд! Поставьте фишки и нажмите «Раздать».');
         this.renderTable();
     }
 
     renderCardHTML(card, hidden = false) {
         if (hidden) {
             return `
-            <div class="pixel-card card-back">
-                <div class="card-inner-pattern">PSP</div>
+            <div class="lit-card card-back">
+                <div class="card-inner-lit">⚡ LIT</div>
             </div>`;
         }
 
         const isRed = card.suit === '♥' || card.suit === '♦';
         return `
-        <div class="pixel-card ${isRed ? 'card-red' : 'card-black'} card-pop">
+        <div class="lit-card ${isRed ? 'card-red' : 'card-black'} card-pop">
             <div class="card-corner top-left">
                 <span class="card-rank">${card.rank}</span>
                 <span class="card-suit">${card.suit}</span>
@@ -341,29 +383,27 @@ class BlackjackGame {
         const playerScore = this.calculateScore(this.playerHand);
         const user = StorageManager.getUser() || { chips: 0, equipped: {} };
 
-        // Dealer Hand HTML
         let dealerCardsHTML = '';
         this.dealerHand.forEach((card, idx) => {
             const isHidden = idx === 1 && (this.gameState === 'player_turn' || this.gameState === 'dealing');
             dealerCardsHTML += this.renderCardHTML(card, isHidden);
         });
 
-        // Player Hand HTML
         let playerCardsHTML = '';
         this.playerHand.forEach(card => {
             playerCardsHTML += this.renderCardHTML(card, false);
         });
 
-        const chipValues = [10, 25, 50, 100, 250];
+        const chipValues = [25, 50, 100, 250, 500];
 
         this.container.innerHTML = `
-        <div class="table-felt blackjack-felt">
-            <!-- Table Header / Dealer Section -->
+        <div class="table-felt lit-felt-bj">
+            <!-- Dealer Banner -->
             <div class="dealer-section">
                 <div class="dealer-avatar-box">
                     <div class="dealer-badge">КРУПЬЕ 21</div>
                     <div class="dealer-avatar">
-                        ${AvatarRenderer.renderSVG({ gender: 'male', skin: 'fair', hair: 'black', hairStyle: 'short', hat: 'top_hat', costume: 'default' }, 56)}
+                        ${AvatarRenderer.renderSVG({ gender: 'male', skin: 'fair', hair: 'black', costume: 'sheikh' }, 54)}
                     </div>
                 </div>
                 <div class="dealer-bubble-container">
@@ -373,61 +413,65 @@ class BlackjackGame {
 
             <!-- Dealer Cards Zone -->
             <div class="cards-zone dealer-zone">
-                <div class="zone-label">КАРТЫ ДИЛЕРА ${this.dealerHand.length > 0 ? `<span class="score-pill">${dealerScore}</span>` : ''}</div>
+                <div class="zone-label">
+                    КАРТЫ ДИЛЕРА ${this.dealerHand.length > 0 ? `<span class="score-pill">${dealerScore}</span>` : ''}
+                </div>
                 <div class="cards-row" id="dealerCardsRow">
                     ${dealerCardsHTML || '<div class="empty-cards-placeholder">Ожидание ставок...</div>'}
                 </div>
             </div>
 
-            <!-- Table Felt Logo / Rules Decor -->
+            <!-- Felt Center Decor -->
             <div class="felt-decor-center">
-                <div class="felt-logo-text">★ BLACKJACK ★</div>
+                <div class="felt-logo-text">⚡ LIT CASINO 21 ⚡</div>
                 <div class="felt-subtext">ДИЛЕР СТОИТ НА 17 • БЛЭКДЖЕК ПЛАТИТ 3:2</div>
                 <div class="current-pot-badge">
-                    Ставка на столе: <span class="pot-num">${this.currentBet} 🪙</span>
+                    Банк на столе: <span class="pot-num">${this.currentBet} 🪙</span>
                 </div>
             </div>
 
             <!-- Player Cards Zone -->
             <div class="cards-zone player-zone">
-                <div class="zone-label">ВАШИ КАРТЫ ${this.playerHand.length > 0 ? `<span class="score-pill">${playerScore}</span>` : ''}</div>
+                <div class="zone-label">
+                    ВАШИ КАРТЫ ${this.playerHand.length > 0 ? `<span class="score-pill">${playerScore}</span>` : ''}
+                </div>
                 <div class="cards-row" id="playerCardsRow">
                     ${playerCardsHTML || '<div class="empty-cards-placeholder">Сделайте ставку для начала раздачи</div>'}
                 </div>
             </div>
 
-            <!-- Bottom Action Panel -->
+            <!-- Action Controls -->
             <div class="table-controls">
                 ${this.gameState === 'betting' ? `
                     <div class="betting-tray">
                         <div class="chips-selector">
                             ${chipValues.map(val => `
-                                <button class="casino-chip chip-${val} ${user.equipped?.chipSkin === 'gold_chips' ? 'vip-gold-chip' : ''}" data-val="${val}">
+                                <button class="lit-chip chip-${val} ${user.equipped?.chipSkin === 'gold_chips' ? 'vip-gold-chip' : ''}" data-val="${val}">
                                     <span class="chip-val">${val}</span>
                                 </button>
                             `).join('')}
                         </div>
                         <div class="action-buttons-row">
-                            <button class="btn-pixel btn-danger" id="btnBjClear">СБРОС</button>
-                            <button class="btn-pixel btn-warning" id="btnBjMin">МИН (${this.minBet})</button>
-                            <button class="btn-pixel btn-success btn-glow" id="btnBjDeal" ${this.currentBet < this.minBet ? 'disabled' : ''}>РАЗДАТЬ</button>
+                            <button class="btn-lit btn-lit-danger" id="btnBjClear">СБРОС</button>
+                            <button class="btn-lit btn-lit-secondary" id="btnBjMin">МИН (${this.minBet})</button>
+                            <button class="btn-lit btn-lit-fire btn-glow" id="btnBjDeal" ${this.currentBet < this.minBet ? 'disabled' : ''}>РАЗДАТЬ</button>
                         </div>
                     </div>
                 ` : ''}
 
                 ${this.gameState === 'player_turn' ? `
                     <div class="game-actions-tray">
-                        <button class="btn-pixel btn-primary" id="btnBjHit">➕ ЕЩЕ</button>
-                        <button class="btn-pixel btn-warning" id="btnBjStand">✋ ХВАТИТ</button>
+                        <button class="btn-lit btn-lit-cyan" id="btnBjHit">➕ ЕЩЕ</button>
+                        <button class="btn-lit btn-lit-secondary" id="btnBjStand">✋ ХВАТИТ</button>
                         ${this.playerHand.length === 2 && user.chips >= this.currentBet ? `
-                            <button class="btn-pixel btn-purple" id="btnBjDouble">⚡ УДВОИТЬ (${this.currentBet * 2})</button>
+                            <button class="btn-lit btn-lit-fire" id="btnBjDouble">⚡ УДВОИТЬ (${this.currentBet * 2})</button>
                         ` : ''}
                     </div>
                 ` : ''}
 
                 ${this.gameState === 'game_over' ? `
                     <div class="game-over-tray">
-                        <button class="btn-pixel btn-success btn-glow pulse-btn" id="btnBjNewRound">🔄 СЛЕДУЮЩИЙ РАУНД</button>
+                        <button class="btn-lit btn-lit-fire btn-glow pulse-btn" id="btnBjNewRound">🔄 СЛЕДУЮЩИЙ РАУНД</button>
                     </div>
                 ` : ''}
             </div>
@@ -438,8 +482,7 @@ class BlackjackGame {
     }
 
     bindEvents() {
-        // Chip buttons
-        this.container.querySelectorAll('.casino-chip').forEach(btn => {
+        this.container.querySelectorAll('.lit-chip').forEach(btn => {
             btn.onclick = () => {
                 const val = parseInt(btn.getAttribute('data-val'), 10);
                 this.addChip(val);

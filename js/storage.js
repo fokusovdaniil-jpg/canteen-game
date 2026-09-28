@@ -1,10 +1,10 @@
-// Storage & State Manager for Retro Casino Mini App
+// Storage & State Manager for LIT CASINO (Lit Energy Style)
 
 const STORAGE_KEYS = {
-    USER: 'retro_casino_user',
-    ROOMS: 'retro_casino_rooms',
-    LEADERBOARD: 'retro_casino_leaderboard',
-    LAST_BONUS: 'retro_casino_last_bonus'
+    USER: 'lit_casino_user',
+    ROOMS: 'lit_casino_rooms',
+    LEADERBOARD: 'lit_casino_leaderboard',
+    LAST_BONUS: 'lit_casino_last_bonus'
 };
 
 const DEFAULT_SHOP_ITEMS = [
@@ -13,56 +13,56 @@ const DEFAULT_SHOP_ITEMS = [
         name: 'Зубенко Михаил Петрович',
         category: 'costume',
         price: 500,
-        badge: 'MEME',
-        desc: '«Вор в законе, шумим братец!» Полосатый пиджак, кепка-восьмиклинка и золотые четки.'
+        badge: 'MEME VIP',
+        desc: '«Вор в законе, шумим братец!» Стильный костюм в тонкую полоску, шелковый галстук и золотые четки.'
     },
     {
         id: 'ivanzolo',
         name: 'Иван Золо 2004',
         category: 'costume',
         price: 450,
-        badge: 'MEME',
-        desc: 'Легендарное красное поло, проводная гарнитура с микрофоном и неповторимый вайб.'
+        badge: 'TIKTOK',
+        desc: 'Фирменное ярко-красное поло Lit Edition, проводные наушники с микрофоном и стримерский вайб.'
     },
     {
         id: 'brigada',
         name: 'Саша Белый (Бригада)',
         category: 'costume',
         price: 400,
-        badge: '90s',
-        desc: 'Брутальный кожаный плащ лихих девяностых и золотой перстень авторитета.'
+        badge: 'BRIGADA',
+        desc: 'Брутальный кожаный плащ из 90-х, строгий силуэт и авторитет главного босса.'
     },
     {
         id: 'sheikh',
-        name: 'Арабский Шейх',
+        name: 'Дубайский Шейх',
         category: 'costume',
         price: 777,
-        badge: 'VIP',
-        desc: 'Белоснежная куфия, золотые часы и неограниченная роскошь нефтяного магната.'
+        badge: 'EXCLUSIVE',
+        desc: 'Белоснежная куфия, золотой агаль, часы Rolex и атмосфера неограниченной роскоши.'
     },
     {
-        id: 'psp_gamer',
-        name: 'PSP Ретро-Геймер',
+        id: 'lit_energy',
+        name: 'Lit Energy Edition',
         category: 'costume',
         price: 350,
-        badge: 'RETRO',
-        desc: 'Фиолетовый оверсайз-худи и оригинальная портативная консоль PSP в руках.'
+        badge: 'FLAME',
+        desc: 'Оригинальный черный худи с огненной неоновой молнией Lit Energy и светящимся кантом.'
     },
     {
         id: 'cyberpunk',
-        name: 'Киберпанк 2077',
+        name: 'Кибер Неон 2077',
         category: 'costume',
         price: 600,
         badge: 'NEO',
-        desc: 'Неоновый голографический визор и светящаяся высокотехнологичная куртка.'
+        desc: 'Неоновый голографический визор с подсветкой и кибернетическая куртка.'
     },
     {
         id: 'crown',
         name: 'Золотая Корона Казино',
         category: 'hat',
         price: 800,
-        badge: 'GOLD',
-        desc: 'Корона из чистого золота с крупными рубинами для короля азарта.'
+        badge: 'ROYAL',
+        desc: 'Корона из белого и желтого золота с крупными рубинами для короля азарта.'
     },
     {
         id: 'top_hat',
@@ -70,7 +70,7 @@ const DEFAULT_SHOP_ITEMS = [
         category: 'hat',
         price: 150,
         badge: 'CLASSIC',
-        desc: 'Изящный черный цилиндр с атласной алой лентой для игры в блэкджек.'
+        desc: 'Элегантный черный цилиндр с алой шелковой лентой.'
     },
     {
         id: 'gangster_fedora',
@@ -78,7 +78,7 @@ const DEFAULT_SHOP_ITEMS = [
         category: 'hat',
         price: 220,
         badge: 'MAFIA',
-        desc: 'Шляпа в стиле мафиози эпохи Сухого закона.'
+        desc: 'Классическая фетровая шляпа итальянской мафии.'
     },
     {
         id: 'deal_with_it',
@@ -86,23 +86,23 @@ const DEFAULT_SHOP_ITEMS = [
         category: 'glasses',
         price: 200,
         badge: 'SWAG',
-        desc: 'Культовые черные пиксельные очки. Надевай при крупных выигрышах.'
+        desc: 'Культовые темные очки для уверенных побед за столом.'
     },
     {
         id: 'aviator',
         name: 'Золотые Авиаторы',
         category: 'glasses',
         price: 180,
-        badge: 'STYLE',
-        desc: 'Классические каплевидные очки пилота в позолоченной оправе.'
+        badge: 'LUXURY',
+        desc: 'Премиальные очки капли в оправе из полированного золота.'
     },
     {
         id: 'gold_chain',
-        name: 'Цепь с Долларом $',
+        name: 'Золотая Цепь Dollar $',
         category: 'accessory',
         price: 250,
         badge: 'ICE',
-        desc: 'Массивная золотая рэперская цепь с сияющим медальоном доллара.'
+        desc: 'Тяжелая массивная золотая цепь с сияющим медальоном доллара.'
     },
     {
         id: 'cigar',
@@ -110,7 +110,7 @@ const DEFAULT_SHOP_ITEMS = [
         category: 'accessory',
         price: 120,
         badge: 'BOSS',
-        desc: 'Элитная сигара ручной скрутки с клубящимся дымком.'
+        desc: 'Элитная сигара с настоящим клубящимся дымком.'
     },
     {
         id: 'gold_chips',
@@ -118,7 +118,7 @@ const DEFAULT_SHOP_ITEMS = [
         category: 'chipSkin',
         price: 300,
         badge: 'SKIN',
-        desc: 'Премиальный золотой блеск для всех игровых фишек на столах.'
+        desc: 'Эксклюзивный золотой блеск с гравировкой Lit Energy для всех фишек на столе.'
     }
 ];
 
@@ -126,43 +126,43 @@ const INITIAL_BOTS = [
     {
         id: 'bot_zubenko',
         nickname: 'Зубенко_М_П',
-        chips: 14500,
-        wins: 142,
+        chips: 18500,
+        wins: 164,
         avatar: { gender: 'male', skin: 'medium', hair: 'black', costume: 'zubenko' }
     },
     {
         id: 'bot_ivanzolo',
         nickname: 'Ivan_Zolo_2004',
-        chips: 9200,
-        wins: 89,
+        chips: 12300,
+        wins: 108,
         avatar: { gender: 'male', skin: 'fair', hair: 'brown', costume: 'ivanzolo' }
     },
     {
         id: 'bot_sheikh',
         nickname: 'Sheikh_Hamdan',
-        chips: 7800,
-        wins: 76,
+        chips: 9800,
+        wins: 89,
         avatar: { gender: 'male', skin: 'medium', hair: 'black', costume: 'sheikh' }
+    },
+    {
+        id: 'bot_litvin',
+        nickname: 'Mikhail_Litvin',
+        chips: 8400,
+        wins: 82,
+        avatar: { gender: 'male', skin: 'fair', hair: 'brown', costume: 'lit_energy' }
     },
     {
         id: 'bot_brigada',
         nickname: 'Саша_Белый',
-        chips: 5600,
-        wins: 58,
+        chips: 6200,
+        wins: 65,
         avatar: { gender: 'male', skin: 'fair', hair: 'black', costume: 'brigada' }
     },
     {
-        id: 'bot_cyber',
-        nickname: 'Cyber_Blade',
-        chips: 3900,
-        wins: 41,
-        avatar: { gender: 'male', skin: 'tan', hair: 'neon', costume: 'cyberpunk' }
-    },
-    {
         id: 'bot_queen',
-        nickname: 'Casino_Queen',
-        chips: 2800,
-        wins: 34,
+        nickname: 'Lit_Queen',
+        chips: 4100,
+        wins: 48,
         avatar: { gender: 'female', skin: 'fair', hair: 'blonde', hat: 'crown' }
     }
 ];
@@ -170,57 +170,57 @@ const INITIAL_BOTS = [
 const INITIAL_ROOMS = [
     {
         id: 'room_1',
-        name: 'Хата Михаила Зубенко',
+        name: 'VIP Клуб Зубенко',
         game: 'blackjack',
         minBet: 50,
         maxPlayers: 4,
         playersCount: 3,
         status: 'playing',
         players: [
-            { nickname: 'Зубенко_М_П', chips: 14500, avatar: { costume: 'zubenko' } },
-            { nickname: 'Lucky_Ace', chips: 1200, avatar: { hat: 'gangster_fedora' } },
-            { nickname: 'Vegas_Pro', chips: 2400, avatar: { glasses: 'deal_with_it' } }
+            { nickname: 'Зубенко_М_П', chips: 18500, avatar: { costume: 'zubenko' } },
+            { nickname: 'Mikhail_Litvin', chips: 8400, avatar: { costume: 'lit_energy' } },
+            { nickname: 'Vegas_Ace', chips: 3200, avatar: { glasses: 'deal_with_it' } }
         ]
     },
     {
         id: 'room_2',
-        name: 'Стрим-рулетка Ивана Золо',
+        name: 'Lit Energy Стрим Ивана Золо',
         game: 'roulette',
         minBet: 25,
         maxPlayers: 6,
         playersCount: 4,
         status: 'betting',
         players: [
-            { nickname: 'Ivan_Zolo_2004', chips: 9200, avatar: { costume: 'ivanzolo' } },
-            { nickname: 'Tik_Toker', chips: 850, avatar: { hairStyle: 'fade' } },
-            { nickname: 'Meme_King', chips: 1600, avatar: { accessory: 'gold_chain' } },
-            { nickname: 'Pixel_Guy', chips: 700, avatar: { costume: 'psp_gamer' } }
+            { nickname: 'Ivan_Zolo_2004', chips: 12300, avatar: { costume: 'ivanzolo' } },
+            { nickname: 'TikTok_Star', chips: 1200, avatar: { hairStyle: 'undercut' } },
+            { nickname: 'Meme_Lord', chips: 2100, avatar: { accessory: 'gold_chain' } },
+            { nickname: 'Cyber_Boy', chips: 950, avatar: { costume: 'cyberpunk' } }
         ]
     },
     {
         id: 'room_3',
-        name: 'Золотое 21 (High Rollers)',
+        name: 'Золотое 21 Дубая',
         game: 'blackjack',
         minBet: 100,
         maxPlayers: 4,
         playersCount: 2,
         status: 'betting',
         players: [
-            { nickname: 'Sheikh_Hamdan', chips: 7800, avatar: { costume: 'sheikh' } },
-            { nickname: 'Саша_Белый', chips: 5600, avatar: { costume: 'brigada' } }
+            { nickname: 'Sheikh_Hamdan', chips: 9800, avatar: { costume: 'sheikh' } },
+            { nickname: 'Саша_Белый', chips: 6200, avatar: { costume: 'brigada' } }
         ]
     },
     {
         id: 'room_4',
-        name: 'Классическая Рулетка КПД',
+        name: 'Рулетка Энергии КПД',
         game: 'roulette',
-        minBet: 10,
+        minBet: 25,
         maxPlayers: 5,
         playersCount: 2,
         status: 'betting',
         players: [
-            { nickname: 'Casino_Queen', chips: 2800, avatar: { hat: 'crown' } },
-            { nickname: 'Retro_Fan', chips: 950, avatar: { costume: 'psp_gamer' } }
+            { nickname: 'Lit_Queen', chips: 4100, avatar: { hat: 'crown' } },
+            { nickname: 'Energy_Fan', chips: 1500, avatar: { costume: 'lit_energy' } }
         ]
     }
 ];
@@ -245,11 +245,11 @@ class StorageManager {
         const newUser = {
             id: 'user_' + Date.now(),
             nickname: profile.nickname || 'Капер',
-            chips: 300, // Starting chips as requested!
+            chips: 300, // 300 стартовых фишек
             gender: profile.gender || 'male',
             skin: profile.skin || 'fair',
             hair: profile.hair || 'black',
-            hairStyle: profile.hairStyle || 'short',
+            hairStyle: profile.hairStyle || 'fade',
             equipped: {
                 costume: 'default',
                 hat: null,
@@ -303,7 +303,6 @@ class StorageManager {
 
         user.chips -= item.price;
         user.inventory.push(itemId);
-        // Auto-equip item
         this.equipItemOnUser(user, item);
         this.saveUser(user);
 
@@ -351,7 +350,7 @@ class StorageManager {
 
         const lastBonus = localStorage.getItem(STORAGE_KEYS.LAST_BONUS);
         const now = Date.now();
-        const cooldown = 24 * 60 * 60 * 1000; // 24 hours
+        const cooldown = 24 * 60 * 60 * 1000;
 
         if (lastBonus && (now - parseInt(lastBonus, 10)) < cooldown) {
             const timeLeft = cooldown - (now - parseInt(lastBonus, 10));
@@ -367,7 +366,6 @@ class StorageManager {
     }
 
     static claimBailout() {
-        // Free emergency chips if player lost everything
         const user = this.getUser();
         if (!user) return { success: false, message: 'Ошибка' };
         if (user.chips >= 10) {
@@ -403,9 +401,9 @@ class StorageManager {
         const user = this.getUser();
         const newRoom = {
             id: 'room_' + Date.now(),
-            name: roomData.name || 'Комната ' + (rooms.length + 1),
+            name: roomData.name || 'Стол ' + (rooms.length + 1),
             game: roomData.game || 'blackjack',
-            minBet: parseInt(roomData.minBet, 10) || 10,
+            minBet: parseInt(roomData.minBet, 10) || 25,
             maxPlayers: parseInt(roomData.maxPlayers, 10) || 4,
             playersCount: 1,
             status: 'betting',
@@ -456,7 +454,6 @@ class StorageManager {
             });
         }
 
-        // Sort descending by chips
         list.sort((a, b) => b.chips - a.chips);
         return list;
     }
@@ -464,7 +461,7 @@ class StorageManager {
     static broadcastSync(action, payload) {
         try {
             if ('BroadcastChannel' in window) {
-                if (!this.bc) this.bc = new BroadcastChannel('retro_casino_sync');
+                if (!this.bc) this.bc = new BroadcastChannel('lit_casino_sync');
                 this.bc.postMessage({ action, payload, time: Date.now() });
             }
         } catch (e) {}

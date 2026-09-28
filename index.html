@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Retro Casino PSP | Telegram Mini App</title>
-    <meta name="description" content="2D Pixel Casino в стиле PSP: Блэкджек, Европейская рулетка, комнаты КПД, мемные скины Зубенко и Иван Золо!">
+    <title>LIT CASINO | Powered by Lit Energy</title>
+    <meta name="description" content="Премиальное онлайн казино в стиле Lit Energy: Блэкджек, Европейская рулетка, комнаты КПД, мемные скины Зубенко и Иван Золо!">
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- 1. TOP RETRO HEADER -->
-        <header class="retro-header">
-            <div class="logo-badge">
-                <span class="logo-icon">🎰</span>
-                <span class="logo-text">CASINO PSP</span>
+        <!-- 1. TOP LIT ENERGY HEADER -->
+        <header class="lit-header">
+            <div class="logo-badge" id="headerLogo" title="Нажмите 5 раз для входа в админку">
+                <span class="logo-icon">⚡</span>
+                <div class="logo-text-group">
+                    <span class="logo-main-text">LIT CASINO</span>
+                    <span class="logo-sub-text">ENERGY EDITION</span>
+                </div>
             </div>
 
             <!-- Chips Balance Pill -->
@@ -25,9 +28,10 @@
                 <button class="btn-add-chips" id="btnAddChips" title="Получить бонус фишек">+</button>
             </div>
 
-            <!-- Sound & Profile Header Controls -->
+            <!-- Sound, Admin & Profile Controls -->
             <div class="header-right">
-                <button class="header-sound-btn" id="btnToggleSound" title="Звук вкл/выкл">🔊</button>
+                <button class="header-btn admin-header-btn" id="btnAdminHeader" title="Панель администратора">⚡ АДМИН</button>
+                <button class="header-btn" id="btnToggleSound" title="Звук вкл/выкл">🔊</button>
                 <div class="header-user-badge" id="headerUserBadge" title="Профиль">
                     <div class="header-avatar" id="headerUserAvatar"></div>
                     <span class="header-nick" id="headerUserNick">Игрок</span>
@@ -53,15 +57,15 @@
             <section class="screen-container" id="screenProfile"></section>
         </main>
 
-        <!-- 3. BOTTOM RETRO NAVIGATION BAR -->
-        <nav class="retro-bottom-nav">
+        <!-- 3. BOTTOM LIT ENERGY NAVIGATION BAR -->
+        <nav class="lit-bottom-nav">
             <button class="nav-item active" data-screen="lobby">
                 <span class="nav-icon">🏠</span>
                 <span class="nav-label">ЛОББИ</span>
             </button>
             <button class="nav-item" data-screen="quick_blackjack">
                 <span class="nav-icon">♠️</span>
-                <span class="nav-label">21 ОЧКО</span>
+                <span class="nav-label">БЛЭКДЖЕК</span>
             </button>
             <button class="nav-item" data-screen="quick_roulette">
                 <span class="nav-icon">🎲</span>
@@ -85,8 +89,9 @@
         <div class="modal-overlay" id="modalRegister">
             <div class="modal-box">
                 <div class="modal-header">
-                    <h2 class="retro-title">СОЗДАНИЕ ПЕРСОНАЖА</h2>
-                    <p class="retro-subtitle">Выберите внешний вид вашего капера и получите стартовые фишки</p>
+                    <span class="lit-badge-fire">⚡ LIT ENERGY WELCOME</span>
+                    <h2 class="lit-title">СОЗДАНИЕ ПЕРСОНАЖА</h2>
+                    <p class="lit-subtitle">Выберите внешний вид вашего капера и получите стартовые фишки</p>
                 </div>
 
                 <div class="reg-preview-box">
@@ -96,16 +101,16 @@
                 <div class="form-group">
                     <label class="form-label">ВЫБЕРИТЕ ОБРАЗ:</label>
                     <div class="reg-presets-list">
-                        <button class="preset-btn selected" data-gender="male" data-skin="fair" data-hair="black" data-style="short">
+                        <button class="preset-btn selected" data-gender="male" data-skin="fair" data-hair="black" data-style="fade">
                             👨 Парень (Светлый)
                         </button>
-                        <button class="preset-btn" data-gender="male" data-skin="tan" data-hair="brown" data-style="fade">
+                        <button class="preset-btn" data-gender="male" data-skin="tan" data-hair="brown" data-style="undercut">
                             👨 Парень (Смуглый)
                         </button>
                         <button class="preset-btn" data-gender="male" data-skin="dark" data-hair="black" data-style="buzz">
                             👨 Парень (Тёмный)
                         </button>
-                        <button class="preset-btn" data-gender="female" data-skin="fair" data-hair="blonde" data-style="long">
+                        <button class="preset-btn" data-gender="female" data-skin="fair" data-hair="blonde" data-style="wavy">
                             👩 Девушка (Светлая)
                         </button>
                         <button class="preset-btn" data-gender="female" data-skin="medium" data-hair="brown" data-style="ponytail">
@@ -118,17 +123,17 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">НИКНЕЙМ В ИГРЕ:</label>
-                    <input type="text" class="input-pixel" id="regNickInput" placeholder="Введите ваш ник..." maxlength="16" value="Lucky_Player">
+                    <label class="form-label">ВАШ НИКНЕЙМ:</label>
+                    <input type="text" class="input-lit" id="regNickInput" placeholder="Введите ваш ник..." maxlength="16" value="Lit_Winner">
                 </div>
 
                 <div class="bonus-announcement">
                     <div class="bonus-gold-text">🪙 СТАРТОВЫЙ БОНУС: 300 ФИШЕК!</div>
-                    <div class="bonus-desc">Начисляется каждому игроку при первой регистрации</div>
+                    <div class="bonus-desc">Начисляется мгновенно каждому новому игроку</div>
                 </div>
 
-                <button class="btn-pixel btn-success btn-glow" id="btnSubmitRegister" style="width: 100%;">
-                    🎮 НАЧАТЬ ИГРУ
+                <button class="btn-lit btn-lit-fire btn-glow" id="btnSubmitRegister" style="width: 100%;">
+                    🔥 НАЧАТЬ ИГРУ
                 </button>
             </div>
         </div>
@@ -137,27 +142,28 @@
         <div class="modal-overlay" id="modalCreateRoom">
             <div class="modal-box">
                 <div class="modal-header">
-                    <h2 class="retro-title">СОЗДАНИЕ СТОЛА</h2>
-                    <p class="retro-subtitle">Настройте параметры вашей комнаты для игры</p>
+                    <span class="lit-badge-fire">⚡ НОВЫЙ СТОЛ</span>
+                    <h2 class="lit-title">СОЗДАНИЕ СТОЛА</h2>
+                    <p class="lit-subtitle">Настройте параметры вашей комнаты для игры</p>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">НАЗВАНИЕ СТОЛА:</label>
-                    <input type="text" class="input-pixel" id="createRoomName" placeholder="Например: Хата Авторитетов" maxlength="24" value="Стол Удачи">
+                    <input type="text" class="input-lit" id="createRoomName" placeholder="Например: VIP Клуб Зубенко" maxlength="24" value="Lit Energy Стол">
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">ИГРОВОЙ РЕЖИМ:</label>
-                    <select class="input-pixel" id="createRoomGame">
+                    <label class="form-label">РЕЖИМ ИГРЫ:</label>
+                    <select class="input-lit" id="createRoomGame">
                         <option value="blackjack">♠️ Блэкджек (21 очко)</option>
                         <option value="roulette">🎲 Европейская Рулетка</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">МИНИМАЛЬНАЯ СТАВКА (ФИШКИ):</label>
-                    <select class="input-pixel" id="createRoomMinBet">
-                        <option value="10">10 🪙 (Новичок)</option>
+                    <label class="form-label">МИНИМАЛЬНАЯ СТАВКА:</label>
+                    <select class="input-lit" id="createRoomMinBet">
+                        <option value="10">10 🪙 (Старт)</option>
                         <option value="25" selected>25 🪙 (Любитель)</option>
                         <option value="50">50 🪙 (Профи)</option>
                         <option value="100">100 🪙 (Хайроллер)</option>
@@ -165,8 +171,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">КОЛИЧЕСТВО МЕСТ ЗА СТОЛОМ:</label>
-                    <select class="input-pixel" id="createRoomMaxPlayers">
+                    <label class="form-label">КОЛИЧЕСТВО МЕСТ:</label>
+                    <select class="input-lit" id="createRoomMaxPlayers">
                         <option value="2">2 игрока</option>
                         <option value="4" selected>4 игрока</option>
                         <option value="6">6 игроков</option>
@@ -174,8 +180,8 @@
                 </div>
 
                 <div class="action-buttons-row" style="margin-top: 14px;">
-                    <button class="btn-pixel btn-secondary" id="btnCloseCreateRoom">ОТМЕНА</button>
-                    <button class="btn-pixel btn-success btn-glow" id="btnSubmitCreateRoom">СОЗДАТЬ СТОЛ</button>
+                    <button class="btn-lit btn-lit-secondary" id="btnCloseCreateRoom">ОТМЕНА</button>
+                    <button class="btn-lit btn-lit-fire btn-glow" id="btnSubmitCreateRoom">СОЗДАТЬ СТОЛ</button>
                 </div>
             </div>
         </div>
@@ -185,6 +191,7 @@
     <script src="js/audio.js"></script>
     <script src="js/avatar.js"></script>
     <script src="js/storage.js"></script>
+    <script src="js/admin.js"></script>
     <script src="js/blackjack.js"></script>
     <script src="js/roulette.js"></script>
     <script src="js/rooms.js"></script>

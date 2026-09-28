@@ -1,4 +1,4 @@
-// Retro 2D Pixel & Canvas European Roulette Engine
+// Modern Lit Energy European Roulette Engine with Vector Canvas & Admin God Mode
 
 const ROULETTE_NUMBERS = [
     0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10,
@@ -11,15 +11,15 @@ class RouletteGame {
     constructor(containerId, options = {}) {
         this.container = document.getElementById(containerId);
         this.options = options;
-        this.minBet = options.minBet || 10;
-        this.selectedChip = 10;
-        this.bets = {}; // e.g. { 'red': 20, '17': 50, 'odd': 10 }
+        this.minBet = options.minBet || 25;
+        this.selectedChip = 25;
+        this.bets = {};
         this.lastBets = {};
         this.isSpinning = false;
         this.wheelAngle = 0;
         this.ballAngle = 0;
         this.history = [32, 15, 0, 7, 26];
-        this.dealerMessage = 'Делайте ваши ставки на игровом поле!';
+        this.dealerMessage = 'Делайте ваши ставки на поле!';
         this.canvas = null;
         this.ctx = null;
         this.animFrame = null;
@@ -52,7 +52,7 @@ class RouletteGame {
 
         const currentTotal = this.getTotalBet();
         if (user.chips < (currentTotal + this.selectedChip)) {
-            this.setDealerMsg('Недостаточно фишек для ставки!');
+            this.setDealerMsg('Недостаточно фишек для этой ставки!');
             return;
         }
 
@@ -87,7 +87,7 @@ class RouletteGame {
         this.bets = { ...this.lastBets };
         window.soundCtrl?.playChip();
         this.updateBetsDisplay();
-        this.setDealerMsg('Предыдущие ставки повторены!');
+        this.setDealerMsg('Ставки повторены!');
     }
 
     formatSpotName(spot) {
@@ -131,28 +131,26 @@ class RouletteGame {
         const ctx = this.ctx;
         const cx = this.canvas.width / 2;
         const cy = this.canvas.height / 2;
-        const outerR = cx - 8;
-        const innerR = outerR * 0.62;
+        const outerR = cx - 10;
+        const innerR = outerR * 0.65;
 
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // 1. Outer rim / Brass casing (PSP Retro Arcade styling)
-        ctx.save();
+        // 1. Premium Outer Metallic Gold & Carbon Ring
+        const ringGrad = ctx.createLinearGradient(0, 0, this.canvas.width, this.canvas.height);
+        ringGrad.addColorStop(0, '#f59e0b');
+        ringGrad.addColorStop(0.5, '#78350f');
+        ringGrad.addColorStop(1, '#ffaa00');
+
         ctx.beginPath();
-        ctx.arc(cx, cy, outerR + 6, 0, Math.PI * 2);
-        ctx.fillStyle = '#b45309';
+        ctx.arc(cx, cy, outerR + 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#090a0f';
         ctx.fill();
         ctx.lineWidth = 4;
-        ctx.strokeStyle = '#f59e0b';
+        ctx.strokeStyle = ringGrad;
         ctx.stroke();
 
-        ctx.beginPath();
-        ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
-        ctx.fillStyle = '#1e293b';
-        ctx.fill();
-        ctx.restore();
-
-        // 2. Wheel Pockets (37 numbers)
+        // 2. Wheel Pockets
         const totalPockets = ROULETTE_NUMBERS.length;
         const anglePerPocket = (Math.PI * 2) / totalPockets;
 
@@ -171,10 +169,10 @@ class RouletteGame {
             ctx.arc(0, 0, outerR, startA, endA);
             ctx.closePath();
 
-            ctx.fillStyle = color === 'green' ? '#15803d' : (color === 'red' ? '#dc2626' : '#18181b');
+            ctx.fillStyle = color === 'green' ? '#059669' : (color === 'red' ? '#e11d48' : '#0f172a');
             ctx.fill();
             ctx.lineWidth = 1;
-            ctx.strokeStyle = '#e2e8f0';
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
             ctx.stroke();
 
             // Pocket text
@@ -182,40 +180,43 @@ class RouletteGame {
             const textAngle = startA + anglePerPocket / 2;
             ctx.rotate(textAngle);
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 9px "Press Start 2P", monospace';
+            ctx.font = 'bold 10px "Inter", sans-serif';
             ctx.textAlign = 'right';
-            ctx.fillText(num.toString(), outerR - 4, 3);
+            ctx.fillText(num.toString(), outerR - 4, 3.5);
             ctx.restore();
         }
 
-        // Inner Turret / Spindle
+        // Inner Turret
         ctx.beginPath();
         ctx.arc(0, 0, innerR, 0, Math.PI * 2);
-        ctx.fillStyle = '#334155';
+        ctx.fillStyle = '#1e293b';
         ctx.fill();
         ctx.lineWidth = 3;
         ctx.strokeStyle = '#f59e0b';
         ctx.stroke();
 
-        // Brass handles / cross
-        ctx.strokeStyle = '#facc15';
-        ctx.lineWidth = 4;
+        // Cross Handles
+        ctx.strokeStyle = '#fde047';
+        ctx.lineWidth = 3.5;
         for (let a = 0; a < 4; a++) {
             ctx.beginPath();
             ctx.moveTo(0, 0);
-            ctx.lineTo(Math.cos(a * Math.PI / 2) * (innerR * 0.75), Math.sin(a * Math.PI / 2) * (innerR * 0.75));
+            ctx.lineTo(Math.cos(a * Math.PI / 2) * (innerR * 0.8), Math.sin(a * Math.PI / 2) * (innerR * 0.8));
             ctx.stroke();
         }
 
-        // Center cone
+        // Lit Energy Center Flame Cone
         ctx.beginPath();
-        ctx.arc(0, 0, innerR * 0.35, 0, Math.PI * 2);
-        ctx.fillStyle = '#d97706';
+        ctx.arc(0, 0, innerR * 0.38, 0, Math.PI * 2);
+        ctx.fillStyle = '#ff5500';
         ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#fde047';
+        ctx.stroke();
 
         ctx.restore();
 
-        // 3. Ball
+        // 3. Polished Ivory Ball with Electric Glow
         if (ballAngle !== null) {
             const ballDist = outerR * 0.82;
             const bx = cx + Math.cos(ballAngle) * ballDist;
@@ -223,13 +224,13 @@ class RouletteGame {
 
             ctx.save();
             ctx.beginPath();
-            ctx.arc(bx, by, 6, 0, Math.PI * 2);
+            ctx.arc(bx, by, 6.5, 0, Math.PI * 2);
             ctx.fillStyle = '#ffffff';
-            ctx.shadowColor = '#00f3ff';
-            ctx.shadowBlur = 8;
+            ctx.shadowColor = '#00f0ff';
+            ctx.shadowBlur = 10;
             ctx.fill();
             ctx.lineWidth = 1;
-            ctx.strokeStyle = '#cbd5e1';
+            ctx.strokeStyle = '#e2e8f0';
             ctx.stroke();
             ctx.restore();
         }
@@ -249,39 +250,57 @@ class RouletteGame {
             return;
         }
 
-        // Deduct bets
         StorageManager.updateChips(-totalBet);
         this.lastBets = { ...this.bets };
         if (window.app) window.app.updateHeaderUser();
 
         this.isSpinning = true;
-        this.setDealerMsg('Колесо запущено! Ставки сделаны, ставок больше нет!');
+        this.setDealerMsg('Колесо запущено! Ставки сделаны!');
         const spinBtn = this.container.querySelector('#btnRouletteSpin');
         if (spinBtn) spinBtn.disabled = true;
 
-        // Choose winning number
-        const winningIndex = Math.floor(Math.random() * ROULETTE_NUMBERS.length);
-        const winningNumber = ROULETTE_NUMBERS[winningIndex];
+        // Determine Winning Number
+        const luckMode = window.adminPanel ? window.adminPanel.getLuckMode() : 'fair';
+        let winningNumber = null;
+
+        if (luckMode === 'god') {
+            // Pick a number that guarantees a win based on user bets
+            const activeSpots = Object.keys(this.bets);
+            if (activeSpots.includes('red')) {
+                winningNumber = RED_NUMBERS[Math.floor(Math.random() * RED_NUMBERS.length)];
+            } else if (activeSpots.includes('black')) {
+                const blackNums = ROULETTE_NUMBERS.filter(n => n !== 0 && !RED_NUMBERS.includes(n));
+                winningNumber = blackNums[Math.floor(Math.random() * blackNums.length)];
+            } else {
+                const directNums = activeSpots.filter(s => !isNaN(parseInt(s, 10)));
+                if (directNums.length > 0) {
+                    winningNumber = parseInt(directNums[0], 10);
+                } else {
+                    winningNumber = 7;
+                }
+            }
+        } else {
+            const winningIndex = Math.floor(Math.random() * ROULETTE_NUMBERS.length);
+            winningNumber = ROULETTE_NUMBERS[winningIndex];
+        }
 
         let speed = 0.28;
         let ballSpeed = -0.38;
         let lastTickTime = 0;
 
         const startTime = Date.now();
-        const duration = 4500; // 4.5 seconds realistic spin
+        const duration = 4200;
 
         const animate = () => {
             const elapsed = Date.now() - startTime;
             const progress = elapsed / duration;
 
             if (progress < 1) {
-                // Deceleration curve
                 const easeOut = 1 - Math.pow(progress, 2.5);
                 this.wheelAngle += speed * easeOut;
                 this.ballAngle += ballSpeed * easeOut;
 
-                // Ticking sound
-                if (Date.now() - lastTickTime > Math.max(70, 70 + progress * 250)) {
+                if (Date.now() - lastTickTime > Math.max(70, 70 + progress * 240)) {
                     window.soundCtrl?.playWheelTick();
                     lastTickTime = Date.now();
                 }
@@ -289,12 +308,10 @@ class RouletteGame {
                 this.drawWheel(this.wheelAngle, this.ballAngle);
                 this.animFrame = requestAnimationFrame(animate);
             } else {
-                // Finalize on winning pocket
                 window.soundCtrl?.playBallDrop();
                 this.isSpinning = false;
                 if (spinBtn) spinBtn.disabled = false;
 
-                // Add to history
                 this.history.unshift(winningNumber);
                 if (this.history.length > 8) this.history.pop();
 
@@ -309,7 +326,6 @@ class RouletteGame {
         const winColor = this.getNumberColor(winNum);
         let totalWon = 0;
 
-        // Calculate payouts
         for (let [spot, amount] of Object.entries(this.bets)) {
             let won = false;
             let multiplier = 0;
@@ -351,7 +367,6 @@ class RouletteGame {
                 won = true;
                 multiplier = 3;
             } else if (parseInt(spot, 10) === winNum) {
-                // Straight up single number: 35 to 1 payout + returned bet (36x)
                 won = true;
                 multiplier = 36;
             }
@@ -369,10 +384,10 @@ class RouletteGame {
                 user.stats.rouletteWins = (user.stats.rouletteWins || 0) + 1;
                 StorageManager.updateChips(totalWon);
                 window.soundCtrl?.playWin();
-                this.setDealerMsg(`🎉 Выпало [${winNum} ${winColor.toUpperCase()}]! ВЫИГРЫШ: +${totalWon} 🪙!`);
+                this.setDealerMsg(`⚡ ВЫПАЛО [${winNum} ${winColor.toUpperCase()}]! ВЫИГРЫШ: +${totalWon} 🪙!`);
             } else {
                 window.soundCtrl?.playLose();
-                this.setDealerMsg(`Выпало [${winNum} ${winColor.toUpperCase()}]. К сожалению, мимо. Попробуйте еще!`);
+                this.setDealerMsg(`Выпало [${winNum} ${winColor.toUpperCase()}]. Ставки проиграли. Попробуйте еще!`);
             }
             StorageManager.saveUser(user);
         }
@@ -392,7 +407,6 @@ class RouletteGame {
     }
 
     updateBetsDisplay() {
-        // Update chip markers on grid
         this.container.querySelectorAll('.grid-cell, .side-bet').forEach(cell => {
             const spot = cell.getAttribute('data-spot');
             const betBadge = cell.querySelector('.cell-bet-badge');
@@ -411,17 +425,14 @@ class RouletteGame {
             }
         });
 
-        // Update total pot label
         const potEl = this.container.querySelector('#rouletteCurrentPot');
         if (potEl) potEl.textContent = `${this.getTotalBet()} 🪙`;
     }
 
     render() {
         const user = StorageManager.getUser() || { chips: 0, equipped: {} };
-        const chipValues = [10, 25, 50, 100, 250];
+        const chipValues = [25, 50, 100, 250, 500];
 
-        // 3x12 roulette numbers layout
-        // Rows: Row 3 (3,6,9...36), Row 2 (2,5,8...35), Row 1 (1,4,7...34)
         let numbersRowsHTML = '';
         for (let r = 3; r >= 1; r--) {
             numbersRowsHTML += `<div class="board-row">`;
@@ -434,7 +445,6 @@ class RouletteGame {
                     </div>
                 `;
             }
-            // 2:1 column bet
             const colSpot = `col${r}`;
             numbersRowsHTML += `
                 <div class="grid-cell cell-col-bet side-bet" data-spot="${colSpot}">
@@ -445,13 +455,13 @@ class RouletteGame {
         }
 
         this.container.innerHTML = `
-        <div class="table-felt roulette-felt">
-            <!-- Dealer & Wheel Banner Section -->
+        <div class="table-felt lit-felt-roulette">
+            <!-- Top Dealer Bar -->
             <div class="roulette-top-bar">
                 <div class="dealer-avatar-box">
                     <div class="dealer-badge">ДИЛЕР РУЛЕТКИ</div>
                     <div class="dealer-avatar">
-                        ${AvatarRenderer.renderSVG({ gender: 'female', skin: 'fair', hair: 'red', hairStyle: 'ponytail', hat: 'crown', costume: 'default' }, 54)}
+                        ${AvatarRenderer.renderSVG({ gender: 'female', skin: 'fair', hair: 'blonde', costume: 'lit_energy' }, 54)}
                     </div>
                 </div>
                 <div class="dealer-bubble-container">
@@ -459,10 +469,10 @@ class RouletteGame {
                 </div>
             </div>
 
-            <!-- Wheel & Recent Numbers -->
+            <!-- Canvas Wheel & History -->
             <div class="roulette-visual-stage">
                 <div class="canvas-wheel-box">
-                    <canvas id="rouletteWheelCanvas" width="230" height="230"></canvas>
+                    <canvas id="rouletteWheelCanvas" width="240" height="240"></canvas>
                 </div>
                 <div class="roulette-history-tray">
                     <div class="tray-title">ИСТОРИЯ ЧИСЕЛ:</div>
@@ -470,12 +480,12 @@ class RouletteGame {
                         ${this.history.map(n => `<span class="history-pill pill-${this.getNumberColor(n)}">${n}</span>`).join('')}
                     </div>
                     <div class="roulette-pot-info">
-                        Общая ставка: <span class="pot-num" id="rouletteCurrentPot">0 🪙</span>
+                        Банк на столе: <span class="pot-num" id="rouletteCurrentPot">0 🪙</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Retro Casino Betting Grid -->
+            <!-- Modern Lit Energy Betting Grid -->
             <div class="roulette-grid-wrapper">
                 <div class="grid-zero-col">
                     <div class="grid-cell cell-green cell-zero" data-spot="0">
@@ -488,7 +498,7 @@ class RouletteGame {
                         ${numbersRowsHTML}
                     </div>
 
-                    <!-- Dozens Bets -->
+                    <!-- Dozens -->
                     <div class="grid-dozens-row">
                         <div class="grid-cell cell-dozen side-bet" data-spot="1st12">1-я 12 (1-12)</div>
                         <div class="grid-cell cell-dozen side-bet" data-spot="2nd12">2-я 12 (13-24)</div>
@@ -507,19 +517,19 @@ class RouletteGame {
                 </div>
             </div>
 
-            <!-- Chips Selector & Action Tray -->
+            <!-- Chips Selector & Actions -->
             <div class="table-controls">
                 <div class="chips-selector">
                     ${chipValues.map(val => `
-                        <button class="casino-chip chip-${val} ${this.selectedChip === val ? 'chip-active' : ''} ${user.equipped?.chipSkin === 'gold_chips' ? 'vip-gold-chip' : ''}" data-val="${val}">
+                        <button class="lit-chip chip-${val} ${this.selectedChip === val ? 'chip-active' : ''} ${user.equipped?.chipSkin === 'gold_chips' ? 'vip-gold-chip' : ''}" data-val="${val}">
                             <span class="chip-val">${val}</span>
                         </button>
                     `).join('')}
                 </div>
                 <div class="action-buttons-row">
-                    <button class="btn-pixel btn-danger" id="btnRouletteClear">СБРОС</button>
-                    <button class="btn-pixel btn-secondary" id="btnRouletteRepeat">ПОВТОР</button>
-                    <button class="btn-pixel btn-success btn-glow" id="btnRouletteSpin">🎲 КРУТИТЬ</button>
+                    <button class="btn-lit btn-lit-danger" id="btnRouletteClear">СБРОС</button>
+                    <button class="btn-lit btn-lit-secondary" id="btnRouletteRepeat">ПОВТОР</button>
+                    <button class="btn-lit btn-lit-fire btn-glow" id="btnRouletteSpin">🎲 КРУТИТЬ</button>
                 </div>
             </div>
         </div>
@@ -531,17 +541,15 @@ class RouletteGame {
     }
 
     bindEvents() {
-        // Chip selector buttons
-        this.container.querySelectorAll('.casino-chip').forEach(btn => {
+        this.container.querySelectorAll('.lit-chip').forEach(btn => {
             btn.onclick = () => {
                 this.selectedChip = parseInt(btn.getAttribute('data-val'), 10);
-                this.container.querySelectorAll('.casino-chip').forEach(b => b.classList.remove('chip-active'));
+                this.container.querySelectorAll('.lit-chip').forEach(b => b.classList.remove('chip-active'));
                 btn.classList.add('chip-active');
                 window.soundCtrl?.playClick();
             };
         });
 
-        // Grid cells betting
         this.container.querySelectorAll('.grid-cell').forEach(cell => {
             cell.onclick = () => {
                 const spot = cell.getAttribute('data-spot');
@@ -549,7 +557,6 @@ class RouletteGame {
             };
         });
 
-        // Controls
         const btnClear = this.container.querySelector('#btnRouletteClear');
         if (btnClear) btnClear.onclick = () => this.clearBets();
 

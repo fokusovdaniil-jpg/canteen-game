@@ -1,4 +1,4 @@
-// Shop and Wardrobe Customization Engine
+// Modern Lit Energy Shop & Wardrobe Customization Engine
 
 class ShopManager {
     constructor() {
@@ -15,7 +15,7 @@ class ShopManager {
 
         container.innerHTML = `
         <div class="shop-wrapper">
-            <!-- Shop Banner & Live Character Fitting Room -->
+            <!-- Shop Banner & Live Fitting Room -->
             <div class="shop-fitting-room">
                 <div class="fitting-avatar-display">
                     <div class="fitting-pedestal">
@@ -25,14 +25,15 @@ class ShopManager {
                     </div>
                     <div class="fitting-character-name">
                         <span class="user-preview-nick">${user.nickname || 'Ваш персонаж'}</span>
-                        <span class="user-preview-chips">Баланс: <b id="shopChipsLabel">${user.chips}</b> 🪙</span>
+                        <span class="user-preview-chips">Баланс: <b id="shopChipsLabel">${user.chips.toLocaleString('ru-RU')}</b> 🪙</span>
                     </div>
                 </div>
 
                 <div class="fitting-info-box">
-                    <h2 class="retro-title">ГАРДЕРОБ & МЕМ-МАРКЕТ</h2>
-                    <p class="retro-subtitle">Покупайте легендарные мемные костюмы, аксессуары и золотые скины за выигранные фишки!</p>
-                    <div class="fitting-tip">💡 Нажмите на любой предмет, чтобы примерить его в примерочной.</div>
+                    <span class="lit-badge-fire">⚡ LIT FASHION & MEMES</span>
+                    <h2 class="lit-title">ГАРДЕРОБ & МЕМ-МАРКЕТ</h2>
+                    <p class="lit-subtitle">Покупайте легендарные мемные костюмы, аксессуары и золотые скины за фишки!</p>
+                    <div class="fitting-tip">💡 Нажмите «Примерить» на любом предмете, чтобы увидеть его в примерочной.</div>
                 </div>
             </div>
 
@@ -40,8 +41,8 @@ class ShopManager {
             <div class="shop-nav-tabs">
                 <button class="shop-tab active" data-cat="all">ВСЁ (${items.length})</button>
                 <button class="shop-tab" data-cat="costume">🔥 КОСТЮМЫ & МЕМЫ</button>
-                <button class="shop-tab" data-cat="hat">👑 ШЛЯПЫ & КОРОНЫ</button>
-                <button class="shop-tab" data-cat="glasses">🕶 ОЧКИ & ВИЗОРЫ</button>
+                <button class="shop-tab" data-cat="hat">👑 ГОЛОВНЫЕ УБОРЫ</button>
+                <button class="shop-tab" data-cat="glasses">🕶 ОЧКИ</button>
                 <button class="shop-tab" data-cat="accessory">💎 АКСЕССУАРЫ</button>
                 <button class="shop-tab" data-cat="chipSkin">🪙 ФИШКИ</button>
             </div>
@@ -61,7 +62,7 @@ class ShopManager {
             gender: user.gender || 'male',
             skin: user.skin || 'fair',
             hair: user.hair || 'black',
-            hairStyle: user.hairStyle || 'short',
+            hairStyle: user.hairStyle || 'fade',
             costume: user.equipped?.costume || 'default',
             hat: user.equipped?.hat || null,
             glasses: user.equipped?.glasses || null,
@@ -84,12 +85,11 @@ class ShopManager {
             const isEquipped = this.isItemEquipped(user, item);
             const canAfford = user.chips >= item.price;
 
-            // Generate miniature item icon preview
             const previewConfig = {
                 gender: 'male',
                 skin: 'fair',
                 hair: 'black',
-                hairStyle: 'short'
+                hairStyle: 'fade'
             };
             if (item.category === 'costume') previewConfig.costume = item.id;
             if (item.category === 'hat') previewConfig.hat = item.id;
@@ -99,9 +99,9 @@ class ShopManager {
             return `
             <div class="shop-item-card ${isEquipped ? 'item-equipped' : ''}" data-cat="${item.category}" data-id="${item.id}">
                 <div class="item-card-header">
-                    <span class="item-badge badge-${item.badge.toLowerCase()}">${item.badge}</span>
+                    <span class="item-badge badge-${item.badge.toLowerCase().replace(/[^a-z0-9]/g, '')}">${item.badge}</span>
                     <span class="item-price-tag ${isOwned ? 'price-owned' : ''}">
-                        ${isOwned ? 'КУПЛЕНО' : `${item.price} 🪙`}
+                        ${isOwned ? 'КУПЛЕНО' : `${item.price.toLocaleString('ru-RU')} 🪙`}
                     </span>
                 </div>
 
@@ -115,15 +115,15 @@ class ShopManager {
                 </div>
 
                 <div class="item-card-actions">
-                    <button class="btn-pixel btn-sm btn-secondary btn-preview-item" data-id="${item.id}">👀 ПРИМЕРИТЬ</button>
+                    <button class="btn-lit btn-lit-secondary btn-sm btn-preview-item" data-id="${item.id}">👀 ПРИМЕРИТЬ</button>
                     ${isOwned ? `
                         ${isEquipped ? `
-                            <button class="btn-pixel btn-sm btn-warning btn-unequip-item" data-id="${item.id}" data-cat="${item.category}">СНЯТЬ</button>
+                            <button class="btn-lit btn-lit-danger btn-sm btn-unequip-item" data-id="${item.id}" data-cat="${item.category}">СНЯТЬ</button>
                         ` : `
-                            <button class="btn-pixel btn-sm btn-success btn-equip-item" data-id="${item.id}">НАДЕТЬ</button>
+                            <button class="btn-lit btn-lit-primary btn-sm btn-equip-item" data-id="${item.id}">НАДЕТЬ</button>
                         `}
                     ` : `
-                        <button class="btn-pixel btn-sm btn-primary btn-buy-item ${!canAfford ? 'btn-disabled' : ''}" data-id="${item.id}" ${!canAfford ? 'disabled' : ''}>
+                        <button class="btn-lit btn-lit-fire btn-sm btn-buy-item ${!canAfford ? 'btn-disabled' : ''}" data-id="${item.id}" ${!canAfford ? 'disabled' : ''}>
                             КУПИТЬ
                         </button>
                     `}
@@ -145,7 +145,6 @@ class ShopManager {
     }
 
     bindShopEvents(container) {
-        // Category Tabs
         container.querySelectorAll('.shop-tab').forEach(tab => {
             tab.onclick = () => {
                 container.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
@@ -164,7 +163,6 @@ class ShopManager {
             };
         });
 
-        // Preview item
         container.querySelectorAll('.btn-preview-item').forEach(btn => {
             btn.onclick = () => {
                 const id = btn.getAttribute('data-id');
@@ -181,7 +179,6 @@ class ShopManager {
             };
         });
 
-        // Buy item
         container.querySelectorAll('.btn-buy-item').forEach(btn => {
             btn.onclick = () => {
                 const id = btn.getAttribute('data-id');
@@ -189,7 +186,7 @@ class ShopManager {
                 if (res.success) {
                     window.soundCtrl?.playBuy();
                     if (window.app) {
-                        window.app.showNotification(`🎉 Поздравляем! Вы приобрели: ${res.item.name}!`);
+                        window.app.showNotification(`🎉 Вы приобрели: ${res.item.name}!`);
                         window.app.updateHeaderUser();
                     }
                     this.renderShop('screenShop');
@@ -200,7 +197,6 @@ class ShopManager {
             };
         });
 
-        // Equip item
         container.querySelectorAll('.btn-equip-item').forEach(btn => {
             btn.onclick = () => {
                 const id = btn.getAttribute('data-id');
@@ -214,7 +210,6 @@ class ShopManager {
             };
         });
 
-        // Unequip item
         container.querySelectorAll('.btn-unequip-item').forEach(btn => {
             btn.onclick = () => {
                 const cat = btn.getAttribute('data-cat');

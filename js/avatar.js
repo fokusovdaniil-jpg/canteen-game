@@ -1,277 +1,303 @@
-// Crisp Pixel Art Avatar Engine for Retro Casino
-// Generates layered retro pixel avatars with meme costumes and accessories
+// Modern High-Definition Vector Avatar Engine (Lit Energy Premium Style - No Pixels!)
 
-const AVATAR_PALETTES = {
+const HD_AVATAR_PALETTES = {
     skin: {
-        fair: '#ffd1b3',
+        fair: '#ffd8c2',
         medium: '#d89b72',
         tan: '#b57448',
-        dark: '#693c1f'
+        dark: '#5c3317'
     },
     skinShadow: {
         fair: '#e8b291',
         medium: '#ba7b53',
         tan: '#8c522e',
-        dark: '#452410'
+        dark: '#3d200e'
     },
     hair: {
-        black: '#1a1a1a',
-        brown: '#4d2b12',
-        blonde: '#e6c86e',
-        red: '#a93b1d',
-        grey: '#8a929a',
-        neon: '#00ffcc'
+        black: '#171717',
+        brown: '#45220d',
+        blonde: '#f5d36c',
+        red: '#c0392b',
+        neon: '#00f0ff',
+        fire: '#ff5500'
     }
 };
 
 class AvatarRenderer {
     static getPresets() {
         return [
-            { id: 'guy_fair', gender: 'male', skin: 'fair', hair: 'black', hairStyle: 'short', name: 'Парень (Светлый)' },
-            { id: 'guy_tan', gender: 'male', skin: 'tan', hair: 'brown', hairStyle: 'fade', name: 'Парень (Смуглый)' },
-            { id: 'guy_dark', gender: 'male', skin: 'dark', hair: 'black', hairStyle: 'buzz', name: 'Парень (Темный)' },
-            { id: 'girl_fair', gender: 'female', skin: 'fair', hair: 'blonde', hairStyle: 'long', name: 'Девушка (Светлая)' },
+            { id: 'guy_fair', gender: 'male', skin: 'fair', hair: 'black', hairStyle: 'fade', name: 'Парень (Светлый)' },
+            { id: 'guy_tan', gender: 'male', skin: 'tan', hair: 'brown', hairStyle: 'undercut', name: 'Парень (Смуглый)' },
+            { id: 'guy_dark', gender: 'male', skin: 'dark', hair: 'black', hairStyle: 'buzz', name: 'Парень (Тёмный)' },
+            { id: 'girl_fair', gender: 'female', skin: 'fair', hair: 'blonde', hairStyle: 'wavy', name: 'Девушка (Светлая)' },
             { id: 'girl_tan', gender: 'female', skin: 'medium', hair: 'brown', hairStyle: 'ponytail', name: 'Девушка (Русая)' },
-            { id: 'girl_dark', gender: 'female', skin: 'dark', hair: 'black', hairStyle: 'curls', name: 'Девушка (Темная)' }
+            { id: 'girl_dark', gender: 'female', skin: 'dark', hair: 'black', hairStyle: 'curls', name: 'Девушка (Тёмная)' }
         ];
     }
 
     /**
-     * Renders a pixel art avatar as an SVG string.
-     * @param {Object} config - { gender, skin, hair, hairStyle, costume, hat, glasses, accessory }
-     * @param {number} size - pixel size (e.g. 64, 120, 180)
+     * Renders a premium vector SVG avatar (Lit Energy Style).
      */
     static renderSVG(config = {}, size = 96) {
         const skinKey = config.skin || 'fair';
-        const skinColor = AVATAR_PALETTES.skin[skinKey] || AVATAR_PALETTES.skin.fair;
-        const skinShadow = AVATAR_PALETTES.skinShadow[skinKey] || AVATAR_PALETTES.skinShadow.fair;
-        const hairColor = AVATAR_PALETTES.hair[config.hair || 'black'] || AVATAR_PALETTES.hair.black;
+        const skin = HD_AVATAR_PALETTES.skin[skinKey] || HD_AVATAR_PALETTES.skin.fair;
+        const skinShadow = HD_AVATAR_PALETTES.skinShadow[skinKey] || HD_AVATAR_PALETTES.skinShadow.fair;
+        const hair = HD_AVATAR_PALETTES.hair[config.hair || 'black'] || HD_AVATAR_PALETTES.hair.black;
         const gender = config.gender || 'male';
-        const hairStyle = config.hairStyle || 'short';
-        const costume = config.costume || 'default_tshirt';
+        const hairStyle = config.hairStyle || (gender === 'female' ? 'wavy' : 'fade');
+        const costume = config.costume || 'default';
         const hat = config.hat || null;
         const glasses = config.glasses || null;
         const accessory = config.accessory || null;
 
-        // Grid is 24x24 pixel art
-        let rects = [];
+        let costumeSVG = '';
+        let headwearSVG = '';
+        let glassesSVG = '';
+        let accessorySVG = '';
+        let hairSVG = '';
 
-        function p(x, y, w, h, fill) {
-            rects.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" />`);
-        }
-
-        // --- 1. BODY / CLOTHING ---
+        // --- 1. CLOTHING / COSTUME (VECTOR HD) ---
         if (costume === 'zubenko') {
-            // Зубенко Михаил Петрович: полосатый пиджак вора в законе + белая рубашка + золотые четки
-            p(6, 15, 12, 9, '#2a2f35'); // пиджак темный
-            p(7, 15, 1, 9, '#555f6d'); // полоска
-            p(9, 15, 1, 9, '#555f6d'); // полоска
-            p(14, 15, 1, 9, '#555f6d'); // полоска
-            p(16, 15, 1, 9, '#555f6d'); // полоска
-            p(10, 15, 4, 6, '#ffffff'); // белая рубашка
-            p(11, 16, 2, 4, '#b30000'); // темно-красный галстук
-            p(11, 19, 2, 3, '#ffd700'); // золотая печатка/четки в руках
-            // руки
-            p(4, 16, 2, 6, '#2a2f35');
-            p(18, 16, 2, 6, '#2a2f35');
-            p(4, 22, 2, 2, skinColor);
-            p(18, 22, 2, 2, skinColor);
+            // Зубенко Михаил Петрович: элегантный темно-графитовый пиджак в тонкую полоску, красный шелковый галстук, золотые четки
+            costumeSVG = `
+                <!-- Zubenko Striped Suit -->
+                <path d="M18,90 Q50,72 82,90 L85,100 L15,100 Z" fill="#1e2229" />
+                <path d="M28,90 L32,100 M40,84 L42,100 M58,84 L60,100 M70,90 L72,100" stroke="#3b4252" stroke-width="1.5" />
+                <!-- Shirt & Red Silk Tie -->
+                <path d="M42,75 L50,88 L58,75 Z" fill="#ffffff" />
+                <path d="M48,77 L52,77 L54,98 L50,100 L46,98 Z" fill="#b91c1c" />
+                <!-- Gold Chain / Rosary -->
+                <path d="M38,82 Q50,96 62,82" fill="none" stroke="url(#goldGrad)" stroke-width="2.5" stroke-linecap="round" />
+                <circle cx="50" cy="94" r="3" fill="#ffaa00" />
+            `;
         } else if (costume === 'ivanzolo') {
-            // Иван Золо: фирменное ярко-красное поло с белым воротником
-            p(6, 15, 12, 9, '#d91424'); // красное поло
-            p(10, 14, 4, 3, '#ffffff'); // белый воротник
-            p(11, 16, 2, 2, '#9e0d19'); // пуговицы
-            p(4, 16, 2, 6, '#d91424');
-            p(18, 16, 2, 6, '#d91424');
-            p(4, 22, 2, 2, skinColor);
-            p(18, 22, 2, 2, skinColor);
+            // Иван Золо: фирменное красное поло Lit Edition с белым кантом
+            costumeSVG = `
+                <path d="M20,90 Q50,74 80,90 L84,100 L16,100 Z" fill="#e11d48" />
+                <path d="M38,76 L50,86 L62,76 L56,74 L50,78 L44,74 Z" fill="#ffffff" />
+                <!-- Polo Placket & Buttons -->
+                <rect x="48" y="82" width="4" height="18" fill="#be123c" rx="1" />
+                <circle cx="50" cy="86" r="1.2" fill="#ffffff" />
+                <circle cx="50" cy="92" r="1.2" fill="#ffffff" />
+            `;
         } else if (costume === 'brigada') {
-            // Саша Белый: черный кожаный длинный плащ 90-х
-            p(5, 15, 14, 9, '#18181b');
-            p(10, 15, 4, 5, '#3b4252'); // темный свитер под плащом
-            p(9, 15, 2, 8, '#27272a'); // лацкан
-            p(13, 15, 2, 8, '#27272a');
-            p(4, 16, 2, 7, '#18181b');
-            p(18, 16, 2, 7, '#18181b');
-            p(4, 23, 2, 1, skinColor);
-            p(18, 23, 2, 1, skinColor);
+            // Саша Белый: стильный кожаный плащ 90-х
+            costumeSVG = `
+                <path d="M16,88 Q50,70 84,88 L88,100 L12,100 Z" fill="#090a0f" />
+                <!-- Lapels -->
+                <path d="M34,74 L46,92 L30,100 Z" fill="#1a1d26" />
+                <path d="M66,74 L54,92 L70,100 Z" fill="#1a1d26" />
+                <path d="M44,76 L50,86 L56,76 Z" fill="#2d3748" />
+            `;
         } else if (costume === 'sheikh') {
-            // Арабский Шейх: белоснежный канджар / тхауб
-            p(6, 15, 12, 9, '#f8fafc');
-            p(10, 15, 4, 8, '#e2e8f0');
-            p(11, 15, 2, 8, '#ffd700'); // золотая вышивка
-            p(4, 16, 2, 7, '#f8fafc');
-            p(18, 16, 2, 7, '#f8fafc');
-            p(4, 22, 2, 2, '#ffd700'); // золотые часы
-            p(18, 22, 2, 2, skinColor);
-        } else if (costume === 'cyberpunk') {
-            // Киберпанк: неоновая куртка с подсветкой
-            p(6, 15, 12, 9, '#090d16');
-            p(6, 15, 1, 9, '#00f3ff'); // неоновый кант
-            p(17, 15, 1, 9, '#00f3ff');
-            p(10, 15, 4, 7, '#ff007f'); // неоновый топ
-            p(4, 16, 2, 6, '#1a1f2c');
-            p(18, 16, 2, 6, '#1a1f2c');
-            p(4, 22, 2, 2, skinColor);
-            p(18, 22, 2, 2, skinColor);
-        } else if (costume === 'psp_gamer') {
-            // Ретро геймер: фиолетовый худи + PSP в руках
-            p(6, 15, 12, 9, '#582d82');
-            p(10, 15, 4, 4, '#7a42b0'); // капюшон/карман
-            p(4, 16, 3, 5, '#582d82');
-            p(17, 16, 3, 5, '#582d82');
-            // PSP в руках:
-            p(8, 20, 8, 3, '#111111'); // черная PSP
-            p(10, 20, 4, 3, '#00e5ff'); // экранчик светящийся
-            p(7, 21, 2, 2, skinColor); // руки держат
-            p(15, 21, 2, 2, skinColor);
+            // Арабский Шейх: белоснежный канджар с золотой вышивкой
+            costumeSVG = `
+                <path d="M18,90 Q50,74 82,90 L85,100 L15,100 Z" fill="#f8fafc" />
+                <path d="M46,76 L54,76 L54,100 L46,100 Z" fill="url(#goldGrad)" />
+                <circle cx="50" cy="84" r="1.5" fill="#ffffff" />
+                <circle cx="50" cy="92" r="1.5" fill="#ffffff" />
+            `;
+        } else if (costume === 'lit_energy' || costume === 'cyberpunk') {
+            // Lit Energy Special Edition Hoodie: неоновый огонь и черный карбон
+            costumeSVG = `
+                <path d="M18,90 Q50,72 82,90 L86,100 L14,100 Z" fill="#0f172a" />
+                <!-- Glowing Energy Lightning / Flame -->
+                <path d="M50,76 L44,88 L52,88 L46,98 L58,86 L50,86 Z" fill="url(#litFlameGrad)" filter="url(#glow)" />
+                <path d="M30,80 Q50,92 70,80" fill="none" stroke="#ff5500" stroke-width="2" />
+            `;
         } else {
-            // Default Casual Shirt / Top
-            const shirtColor = gender === 'female' ? '#9333ea' : '#1e3a8a';
-            p(6, 15, 12, 9, shirtColor);
-            p(10, 14, 4, 3, skinColor); // шея
-            p(4, 16, 2, 6, shirtColor);
-            p(18, 16, 2, 6, shirtColor);
-            p(4, 22, 2, 2, skinColor);
-            p(18, 22, 2, 2, skinColor);
+            // Default Premium Casual Polo / Top
+            const shirtColor = gender === 'female' ? '#7c3aed' : '#0284c7';
+            costumeSVG = `
+                <path d="M20,90 Q50,74 80,90 L84,100 L16,100 Z" fill="${shirtColor}" />
+                <path d="M40,75 L50,85 L60,75 Z" fill="#ffffff" opacity="0.9" />
+            `;
         }
 
-        // --- 2. HEAD & FACE BASE ---
-        p(8, 7, 8, 8, skinColor); // лицо
-        p(8, 13, 8, 2, skinShadow); // тень подбородка
-        // Уши
-        p(7, 9, 1, 3, skinColor);
-        p(16, 9, 1, 3, skinColor);
-
-        // Глаза
-        p(9, 10, 2, 2, '#ffffff');
-        p(10, 10, 1, 2, '#1e293b'); // зрачок
-        p(13, 10, 2, 2, '#ffffff');
-        p(14, 10, 1, 2, '#1e293b'); // зрачок
-
-        // Рот / Улыбка
-        p(11, 13, 2, 1, '#b91c1c');
-
-        // Румяна для девушек
-        if (gender === 'female') {
-            p(8, 11, 2, 1, '#f472b6');
-            p(14, 11, 2, 1, '#f472b6');
-        }
-
-        // --- 3. HAIR & BASE HEADWEAR ---
+        // --- 2. HAIR (VECTOR SMOOTH) ---
         if (costume === 'ivanzolo') {
-            // Фирменная челка и стрижка Ивана Золо + проводные наушники с микрофоном!
-            p(7, 5, 10, 3, '#26170d');
-            p(8, 8, 8, 2, '#26170d'); // прямая челка
-            p(6, 8, 2, 4, '#1c1917'); // виски
-            p(16, 8, 2, 4, '#1c1917');
-            // Проводные наушники-гарнитура:
-            p(6, 9, 2, 3, '#ffffff'); // наушник слева
-            p(16, 9, 2, 3, '#ffffff'); // наушник справа
-            p(7, 5, 10, 1, '#e2e8f0'); // оголовье наушников
-            p(14, 12, 3, 1, '#000000'); // микрофон гарнитуры у рта
+            // Иван Золо: фирменная прическа с прямой челкой + стильные наушники с микрофоном
+            hairSVG = `
+                <path d="M28,42 Q50,18 72,42 Q74,48 72,54 L28,54 Q26,48 28,42 Z" fill="#2d1d13" />
+                <path d="M30,42 L70,42 L70,49 L30,49 Z" fill="#2d1d13" />
+                <!-- Ivan Zolo Streamer Headset -->
+                <path d="M24,46 Q50,18 76,46" fill="none" stroke="#e2e8f0" stroke-width="3.5" stroke-linecap="round" />
+                <!-- Ear cushions -->
+                <rect x="20" y="44" width="7" height="15" rx="3.5" fill="#ff5500" />
+                <rect x="73" y="44" width="7" height="15" rx="3.5" fill="#ff5500" />
+                <!-- Boom Mic -->
+                <path d="M24,56 Q35,66 46,62" fill="none" stroke="#111827" stroke-width="2" />
+                <circle cx="47" cy="62" r="2.5" fill="#ff0044" />
+            `;
         } else if (costume === 'sheikh') {
-            // Белая куфия с черным агалем
-            p(6, 4, 12, 3, '#ffffff');
-            p(6, 6, 12, 1, '#111111'); // черный двойной жгут (агаль)
-            p(6, 7, 2, 8, '#ffffff');  // ниспадающая ткань слева
-            p(16, 7, 2, 8, '#ffffff'); // ниспадающая ткань справа
+            // Шейх: куфия и агаль
+            hairSVG = `
+                <path d="M24,32 Q50,20 76,32 Q82,50 82,78 L72,82 L72,46 L28,46 L28,82 L18,78 Q18,50 24,32 Z" fill="#ffffff" />
+                <!-- Black Agal Cords -->
+                <ellipse cx="50" cy="34" rx="26" ry="6" fill="none" stroke="#111827" stroke-width="4.5" />
+                <ellipse cx="50" cy="36" rx="25" ry="5.5" fill="none" stroke="#d97706" stroke-width="1.5" />
+            `;
+        } else if (hairStyle === 'fade') {
+            hairSVG = `
+                <path d="M28,40 Q50,18 72,40 Q74,48 70,52 Q50,38 30,52 Q26,48 28,40 Z" fill="${hair}" />
+            `;
+        } else if (hairStyle === 'undercut') {
+            hairSVG = `
+                <path d="M28,38 Q50,16 74,36 Q70,44 68,48 Q50,34 32,48 Z" fill="${hair}" />
+            `;
+        } else if (hairStyle === 'wavy') {
+            hairSVG = `
+                <path d="M26,42 Q50,16 74,42 Q82,60 78,82 Q72,70 70,54 Q50,36 30,54 Q28,70 22,82 Q18,60 26,42 Z" fill="${hair}" />
+            `;
+        } else if (hairStyle === 'ponytail') {
+            hairSVG = `
+                <path d="M28,40 Q50,18 72,40 Q74,52 68,52 Q50,38 32,52 Z" fill="${hair}" />
+                <path d="M68,36 Q84,32 86,52 Q82,62 76,64 Q78,50 70,44 Z" fill="${hair}" />
+                <circle cx="70" cy="38" r="3" fill="#ff5500" />
+            `;
         } else {
-            // Стандартные прически
-            if (hairStyle === 'short') {
-                p(8, 5, 8, 3, hairColor);
-                p(7, 6, 2, 3, hairColor);
-                p(8, 7, 8, 1, hairColor);
-            } else if (hairStyle === 'fade') {
-                p(8, 4, 8, 3, hairColor);
-                p(8, 7, 8, 1, hairColor);
-                p(7, 7, 1, 2, hairColor);
-                p(16, 7, 1, 2, hairColor);
-            } else if (hairStyle === 'long') {
-                p(7, 5, 10, 3, hairColor);
-                p(6, 7, 2, 9, hairColor);
-                p(16, 7, 2, 9, hairColor);
-                p(8, 7, 8, 1, hairColor);
-            } else if (hairStyle === 'ponytail') {
-                p(7, 5, 10, 3, hairColor);
-                p(6, 7, 2, 6, hairColor);
-                p(16, 7, 2, 6, hairColor);
-                p(17, 3, 3, 5, hairColor); // хвостик
-            } else if (hairStyle === 'buzz') {
-                p(8, 6, 8, 2, hairColor);
-            } else {
-                p(7, 5, 10, 3, hairColor);
-                p(8, 7, 8, 1, hairColor);
-            }
+            hairSVG = `
+                <path d="M30,42 Q50,20 70,42 Q72,48 68,50 Q50,38 32,50 Z" fill="${hair}" />
+            `;
         }
 
-        // --- 4. HATS & COSTUME HEADWEAR ---
+        // --- 3. HATS & HEADWEAR ---
         if (costume === 'zubenko' || hat === 'zubenko_cap') {
-            // Зубенко Михаил Петрович: кепка-восьмиклинка (хулиганка)
-            p(6, 4, 12, 3, '#374151');
-            p(5, 6, 14, 2, '#4b5563');
-            p(6, 7, 12, 1, '#1f2937'); // козырек
-            p(11, 3, 2, 1, '#111827'); // пуговица на кепке
+            // Кепка восьмиклинка (хулиганка) Зубенко
+            headwearSVG = `
+                <path d="M22,38 Q50,16 78,38 Q84,46 76,46 Q50,38 24,46 Q16,46 22,38 Z" fill="#2d3748" />
+                <ellipse cx="50" cy="30" rx="30" ry="10" fill="#374151" />
+                <path d="M22,42 Q50,34 78,42 Q68,46 50,45 Q32,46 22,42 Z" fill="#1a202c" />
+                <circle cx="50" cy="22" r="2.5" fill="#111827" />
+            `;
         } else if (hat === 'crown') {
-            // Золотая корона казино с рубинами
-            p(7, 2, 10, 4, '#eab308');
-            p(7, 2, 2, 3, '#facc15');
-            p(11, 1, 2, 4, '#facc15');
-            p(15, 2, 2, 3, '#facc15');
-            p(9, 3, 1, 1, '#dc2626'); // рубин
-            p(11, 2, 2, 1, '#2563eb'); // сапфир
-            p(14, 3, 1, 1, '#dc2626');
+            // Золотая Корона Казино
+            headwearSVG = `
+                <path d="M28,32 L34,16 L42,26 L50,12 L58,26 L66,16 L72,32 Z" fill="url(#goldGrad)" stroke="#b45309" stroke-width="1.5" />
+                <!-- Rubies -->
+                <circle cx="50" cy="22" r="2.5" fill="#ef4444" />
+                <circle cx="38" cy="27" r="2" fill="#3b82f6" />
+                <circle cx="62" cy="27" r="2" fill="#3b82f6" />
+            `;
         } else if (hat === 'top_hat') {
-            // Джентльменский цилиндр
-            p(9, 1, 6, 5, '#18181b');
-            p(9, 5, 6, 1, '#dc2626'); // красная лента
-            p(6, 6, 12, 1, '#27272a'); // поля
+            headwearSVG = `
+                <path d="M18,38 L82,38 L78,42 L22,42 Z" fill="#090a0f" />
+                <rect x="30" y="10" width="40" height="28" rx="2" fill="#1e293b" />
+                <rect x="30" y="32" width="40" height="6" fill="#dc2626" />
+            `;
         } else if (hat === 'gangster_fedora') {
-            // Гангстерская шляпа
-            p(7, 3, 10, 3, '#1f2937');
-            p(7, 5, 10, 1, '#ffffff'); // белая лента
-            p(5, 6, 14, 1, '#111827'); // поля шляпы
+            headwearSVG = `
+                <path d="M16,40 Q50,28 84,40 L78,44 Q50,36 22,44 Z" fill="#1e293b" />
+                <path d="M30,40 Q50,18 70,40 Z" fill="#334155" />
+                <path d="M32,36 Q50,32 68,36" stroke="#ffffff" stroke-width="2" />
+            `;
         }
 
-        // --- 5. GLASSES & VISORS ---
+        // --- 4. GLASSES ---
         if (costume === 'cyberpunk' || glasses === 'cyber_visor') {
-            // Неоновый кибер-визор
-            p(8, 9, 8, 3, '#00f3ff');
-            p(9, 10, 6, 1, '#ffffff');
-            p(7, 9, 1, 1, '#00bcd4');
-            p(16, 9, 1, 1, '#00bcd4');
+            glassesSVG = `
+                <path d="M26,48 L74,48 L70,57 L30,57 Z" fill="#00f0ff" opacity="0.9" filter="url(#glow)" />
+                <path d="M28,50 L72,50" stroke="#ffffff" stroke-width="1.5" />
+            `;
         } else if (glasses === 'deal_with_it') {
-            // Очки "Deal With It"
-            p(8, 9, 8, 3, '#000000');
-            p(9, 9, 1, 1, '#ffffff');
-            p(13, 9, 1, 1, '#ffffff');
+            glassesSVG = `
+                <rect x="27" y="47" width="19" height="11" fill="#000000" rx="1" />
+                <rect x="54" y="47" width="19" height="11" fill="#000000" rx="1" />
+                <rect x="46" y="49" width="8" height="3" fill="#000000" />
+                <rect x="29" y="48" width="4" height="2" fill="#ffffff" />
+                <rect x="56" y="48" width="4" height="2" fill="#ffffff" />
+            `;
         } else if (glasses === 'aviator') {
-            // Золотые авиаторы
-            p(8, 9, 3, 3, '#334155');
-            p(13, 9, 3, 3, '#334155');
-            p(11, 9, 2, 1, '#eab308'); // дужка
-            p(7, 9, 1, 1, '#eab308');
-            p(16, 9, 1, 1, '#eab308');
+            glassesSVG = `
+                <ellipse cx="37" cy="52" rx="10" ry="7" fill="#1e293b" stroke="url(#goldGrad)" stroke-width="1.5" />
+                <ellipse cx="63" cy="52" rx="10" ry="7" fill="#1e293b" stroke="url(#goldGrad)" stroke-width="1.5" />
+                <path d="M47,50 L53,50" stroke="url(#goldGrad)" stroke-width="1.5" />
+            `;
         }
 
-        // --- 6. ACCESSORIES ---
+        // --- 5. ACCESSORIES ---
         if (accessory === 'cigar') {
-            // Гаванская сигара с дымком
-            p(13, 13, 4, 1, '#78350f');
-            p(17, 13, 1, 1, '#ef4444'); // уголек
-            p(18, 12, 1, 1, '#cbd5e1'); // дым
-            p(19, 11, 1, 1, '#94a3b8');
+            accessorySVG = `
+                <rect x="58" y="65" width="16" height="4" rx="1" fill="#78350f" transform="rotate(-10 58 65)" />
+                <circle cx="73" cy="62" r="2" fill="#ff4400" filter="url(#glow)" />
+                <!-- Smoke puff -->
+                <path d="M75,60 Q82,54 78,48 Q84,42 80,36" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" opacity="0.7" />
+            `;
         } else if (accessory === 'gold_chain') {
-            // Массивная золотая цепь
-            p(9, 15, 6, 1, '#facc15');
-            p(10, 16, 4, 1, '#eab308');
-            p(11, 17, 2, 2, '#ca8a04'); // медальон / доллар
+            accessorySVG = `
+                <path d="M34,80 Q50,102 66,80" fill="none" stroke="url(#goldGrad)" stroke-width="3" stroke-linecap="round" />
+                <!-- Dollar Medallion -->
+                <circle cx="50" cy="98" r="6" fill="url(#goldGrad)" stroke="#b45309" stroke-width="1" />
+                <text x="50" y="101" font-family="'Inter', sans-serif" font-weight="900" font-size="7" fill="#1e293b" text-anchor="middle">$</text>
+            `;
         }
 
         return `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${size}" height="${size}" style="shape-rendering: crispEdges; image-rendering: pixelated; display: block;">
-            <rect width="24" height="24" fill="transparent" />
-            ${rects.join('\n')}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="${size}" height="${size}" style="display: block;">
+            <defs>
+                <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#fde047" />
+                    <stop offset="50%" stop-color="#eab308" />
+                    <stop offset="100%" stop-color="#a16207" />
+                </linearGradient>
+                <linearGradient id="litFlameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stop-color="#ff3300" />
+                    <stop offset="50%" stop-color="#ff7700" />
+                    <stop offset="100%" stop-color="#ffcc00" />
+                </linearGradient>
+                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="2" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+            </defs>
+
+            <!-- Base Character Silhouette / Glow Aura -->
+            <ellipse cx="50" cy="85" rx="34" ry="14" fill="#000000" opacity="0.4" />
+
+            <!-- Clothing / Costume -->
+            ${costumeSVG}
+
+            <!-- Neck -->
+            <path d="M42,66 L58,66 L58,78 L42,78 Z" fill="${skinShadow}" />
+
+            <!-- Face Shape (Smooth Curved Modern Vector) -->
+            <path d="M30,42 Q50,28 70,42 Q74,66 50,76 Q26,66 30,42 Z" fill="${skin}" />
+            <path d="M38,68 Q50,76 62,68 Q50,72 38,68 Z" fill="${skinShadow}" />
+
+            <!-- Ears -->
+            <ellipse cx="28" cy="50" rx="3.5" ry="6" fill="${skin}" />
+            <ellipse cx="72" cy="50" rx="3.5" ry="6" fill="${skin}" />
+
+            <!-- Eyes & Eyebrows -->
+            <ellipse cx="40" cy="48" rx="3" ry="2.2" fill="#ffffff" />
+            <circle cx="41" cy="48" r="1.4" fill="#1e293b" />
+            <path d="M36,44 Q41,42 45,44" fill="none" stroke="#1e293b" stroke-width="1.2" stroke-linecap="round" />
+
+            <ellipse cx="60" cy="48" rx="3" ry="2.2" fill="#ffffff" />
+            <circle cx="59" cy="48" r="1.4" fill="#1e293b" />
+            <path d="M55,44 Q59,42 64,44" fill="none" stroke="#1e293b" stroke-width="1.2" stroke-linecap="round" />
+
+            <!-- Nose & Mouth -->
+            <path d="M50,50 L48,56 L52,56" fill="none" stroke="${skinShadow}" stroke-width="1.2" stroke-linecap="round" />
+            <path d="M44,63 Q50,68 56,63" fill="none" stroke="#991b1b" stroke-width="1.6" stroke-linecap="round" />
+
+            ${gender === 'female' ? `
+                <!-- Cute blush -->
+                <circle cx="36" cy="56" r="3" fill="#f43f5e" opacity="0.3" />
+                <circle cx="64" cy="56" r="3" fill="#f43f5e" opacity="0.3" />
+            ` : ''}
+
+            <!-- Hair (rendered over face) -->
+            ${hairSVG}
+
+            <!-- Glasses (rendered over eyes/hair) -->
+            ${glassesSVG}
+
+            <!-- Hat (rendered over hair) -->
+            ${headwearSVG}
+
+            <!-- Accessories -->
+            ${accessorySVG}
         </svg>
         `.trim();
     }
